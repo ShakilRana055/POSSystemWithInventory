@@ -1,0 +1,204 @@
+﻿.sells_window {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    color: #333;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+    .sells_window .billing_window {
+        width: 59%;
+        height: 100%;
+        background-color: #fff;
+        border-radius: 10px;
+    }
+
+        .sells_window .billing_window .billing {
+            width: 100%;
+            height: 100%;
+            padding: 12px;
+            display: flex;
+            flex-flow: column wrap;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+            .sells_window .billing_window .billing .extra_buttons {
+                width: 100%;
+                display: flex;
+                flex-flow: row wrap;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
+
+            .sells_window .billing_window .billing .ledger {
+                width: 100%;
+                display: flex;
+                flex-flow: row wrap;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
+
+            .sells_window .billing_window .billing .searching {
+                width: 100%;
+            }
+
+            .sells_window .billing_window .billing .bill_table {
+                width: 100%;
+            }
+
+            .sells_window .billing_window .billing .payment {
+                width: 100%;
+                display: flex;
+                flex-flow: row wrap;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
+
+                .sells_window .billing_window .billing .payment .payment_methods {
+                    width: 40%;
+                }
+
+                .sells_window .billing_window .billing .payment .pay_bill {
+                    width: 59%;
+                }
+
+    .sells_window .products_window {
+        width: 40%;
+        height: 100%;
+    }
+
+        .sells_window .products_window .products {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-flow: row wrap;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+            .sells_window .products_window .products .productCategories {
+                width: 30%;
+                background-color: #fff;
+                padding: 12px;
+                border-top-left-radius: 10px;
+                border-bottom-left-radius: 10px;
+                height: 100%;
+            }
+
+                .sells_window .products_window .products .productCategories .btn {
+                    font-size: 17px !important;
+                    line-height: 20px !important;
+                    width: 100% !important;
+                }
+
+            .sells_window .products_window .products .productDetails {
+                width: 69%;
+                background-color: #fff;
+                padding: 12px;
+                border-top-right-radius: 10px;
+                border-bottom-right-radius: 10px;
+                height: 100%;
+                display: flex;
+                flex-flow: row wrap;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
+
+                .sells_window .products_window .products .productDetails .productItem {
+                    width: 30%;
+                    padding: 7px;
+                    border-radius: 6px;
+                    border: none;
+                    background-color: #f1f1f182;
+                    -webkit-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 3px 10px 0 rgba(0, 0, 0, 0.005);
+                    -moz-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 3px 10px 0 rgba(0, 0, 0, 0.005);
+                    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 3px 10px 0 rgba(0, 0, 0, 0.005);
+                }
+
+                    .sells_window .products_window .products .productDetails .productItem div {
+                        margin-bottom: 3px;
+                    }
+
+                    .sells_window .products_window .products .productDetails .productItem:hover {
+                        border: 1px dashed #777;
+                        -webkit-box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.75);
+                        -moz-box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.75);
+                        box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.75);
+                    }
+
+    .sells_window input {
+        height: 33px;
+        font-size: 90%;
+        line-height: 1;
+    }
+
+    .sells_window select {
+        height: 33px;
+        font-size: 90%;
+        line-height: 1;
+    }
+
+.select2-container--default .select2-selection--single {
+    height: 33px;
+}
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 30px;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 31px;
+    }
+
+
+.sells_window .billing_window .billing .ledger .btn {
+    font-size: 25px !important;
+    line-height: 17px !important;
+}
+
+.inline_input_group {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    margin: 0;
+}
+
+    .inline_input_group .input-group {
+        width: 49% !important;
+        margin: 0;
+    }
+
+
+.pay_bill table tr td {
+    text-align: right;
+}
+
+    .pay_bill table tr td:first-child {
+        width: 50%;
+    }
+
+.pay_bill table tr input {
+    text-align: right;
+}
+
+
+.sells_window input::-webkit-outer-spin-button,
+.sells_window input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+.sells_window input[type=number] {
+    -moz-appearance: textfield; /* Firefox */
+}
+
+
+.table-sm thead tr th {
+    font-size: 90%;
+}

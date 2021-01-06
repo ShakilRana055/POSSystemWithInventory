@@ -1,0 +1,196 @@
+﻿.purchaseWindowOptions {
+    height: auto;
+    width: 100%;
+}
+
+    .purchaseWindowOptions .options {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: flex-start;
+    }
+
+        .purchaseWindowOptions .options .option_item {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            flex-flow: column wrap;
+            justify-content: center;
+            align-items: center;
+            -webkit-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 3px 10px 0 rgba(0, 0, 0, 0.005);
+            -moz-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 3px 10px 0 rgba(0, 0, 0, 0.005);
+            box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 3px 10px 0 rgba(0, 0, 0, 0.005);
+            margin: 0px 5px 10px 5px;
+        }
+
+            .purchaseWindowOptions .options .option_item:hover {
+                border: 2px solid #12188c;
+                -webkit-box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.75);
+                -moz-box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.75);
+                box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.75);
+                cursor: pointer;
+            }
+
+            .purchaseWindowOptions .options .option_item .option_item_image {
+                height: 70%;
+                width: 100%;
+                text-align: center;
+            }
+
+                .purchaseWindowOptions .options .option_item .option_item_image i {
+                    font-size: 50px;
+                }
+
+            .purchaseWindowOptions .options .option_item .option_item_name {
+                height: 30%;
+                width: 100%;
+                background-color: #12188c;
+                color: #fff;
+                display: flex;
+                flex-flow: column wrap;
+                justify-content: center;
+                align-items: center;
+                font-weight: 600;
+            }
+
+                .purchaseWindowOptions .options .option_item .option_item_name p {
+                    padding: 0;
+                    margin: 0;
+                }
+
+.purchaseWindow {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+}
+
+    .purchaseWindow .productsModule {
+        width: 29%;
+        height: auto;
+    }
+
+        .purchaseWindow .productsModule .productFilterOptions {
+            display: flex;
+            flex-flow: row wrap;
+            justify-content: space-between;
+            background-color: #fff;
+            padding: 5px;
+            margin-bottom: 4px;
+        }
+
+            .purchaseWindow .productsModule .productFilterOptions .productFilter {
+                width: 33%;
+            }
+
+        .purchaseWindow .productsModule .productSearchOption {
+            width: 100%;
+            height: auto;
+            background-color: #fff;
+            padding: 5px;
+            margin-bottom: 4px;
+        }
+
+        .purchaseWindow .productsModule .products {
+            width: 100%;
+            height: auto;
+            background-color: #fff;
+            display: flex;
+            flex-flow: row wrap;
+            padding: 5px;
+            margin-bottom: 4px;
+        }
+
+            .purchaseWindow .productsModule .products .productItem {
+                width: 100px;
+                height: 100px;
+                display: flex;
+                flex-flow: column wrap;
+                justify-content: center;
+                align-items: center;
+                -webkit-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 3px 10px 0 rgba(0, 0, 0, 0.005);
+                -moz-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 3px 10px 0 rgba(0, 0, 0, 0.005);
+                box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 3px 10px 0 rgba(0, 0, 0, 0.005);
+                margin: 0px 5px 10px 5px;
+            }
+
+                .purchaseWindow .productsModule .products .productItem:hover {
+                    border: 1px solid #12188c;
+                    -webkit-box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.75);
+                    -moz-box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.75);
+                    box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.75);
+                    cursor: pointer;
+                }
+
+    .purchaseWindow .billingModule {
+        width: 70%;
+    }
+
+        .purchaseWindow .billingModule .selectledger {
+            padding: 5px;
+            background-color: #fff;
+            margin-bottom: 4px;
+            display: flex;
+            flex-flow: row wrap;
+            justify-content: space-between;
+        }
+
+        .purchaseWindow .billingModule .ledgerDetails {
+            font-size: 11px;
+            padding: 5px;
+            background-color: #fff;
+            margin-bottom: 4px;
+        }
+
+            .purchaseWindow .billingModule .ledgerDetails input {
+                font-size: 11px;
+            }
+
+        .purchaseWindow .billingModule .productItems {
+            height: 40vh;
+            width: 100%;
+            padding: 5px;
+            background-color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .purchaseWindow .billingModule .billing {
+            width: 100%;
+            padding: 5px;
+            background-color: #fff;
+            margin-bottom: 4px;
+            display: flex;
+            flex-flow: row wrap;
+            justify-content: space-between;
+        }
+
+            .purchaseWindow .billingModule .billing .billing_methods {
+                width: 35%;
+                padding: 10px;
+                display: flex;
+                flex-flow: row wrap;
+                justify-content: space-between;
+            }
+
+                .purchaseWindow .billingModule .billing .billing_methods .methods {
+                    width: 100%;
+                }
+
+                    .purchaseWindow .billingModule .billing .billing_methods .methods button {
+                        font-size: 12px;
+                    }
+
+            .purchaseWindow .billingModule .billing .bills{
+                width: 65%;
+            }
+            .purchaseWindow .billingModule .billing .bills .billDetails input {
+                font-size: 12px;
+                height: 25px;
+                text-align: right;
+            }
+
+
+.no-border {
+    border: none;
+}
+

@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using POSSystemWithInventory.Data;
+using POSSystemWithInventory.RepositoryPattern.Interfaces.IUnitOfWork;
+using POSSystemWithInventory.RepositoryPattern.Repositories.UnitOfWork;
 
 namespace POSSystemWithInventory
 {
@@ -28,6 +30,8 @@ namespace POSSystemWithInventory
             services.AddControllersWithViews();
             string connectionString = "Server = SHAKILRANA; Database = POSWithInventory; Trusted_Connection=true;MultipleActiveResultSets=true";
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IImageProcessing, ImageProcessing>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,7 +58,7 @@ namespace POSSystemWithInventory
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Login}/{action=Index}/{id?}");
             });
         }
     }

@@ -13,5 +13,9 @@ namespace POSSystemWithInventory.EntityModel
         public string Address { get; set; }
         public string NID { get; set; }
         public string PhotoUrl { get; set; }
+        public string CompanyName { get; set; }
+        public string Phone { get; set; }
+        public string Designation { get; set; }
+        public string Profession { get; set; }
     }
 }

@@ -1,0 +1,135 @@
+﻿.settings {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+}
+
+    .settings .setting_item {
+        width: 80px;
+        height: 80px;
+        display: flex;
+        flex-flow: column wrap;
+        justify-content: flex-end;
+        align-items: center;
+        -webkit-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 3px 10px 0 rgba(0, 0, 0, 0.005);
+        -moz-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 3px 10px 0 rgba(0, 0, 0, 0.005);
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 3px 10px 0 rgba(0, 0, 0, 0.005);
+        margin: 0px 5px 10px 5px;
+    }
+
+        .settings .setting_item:hover {
+            border: 2px solid #12188c;
+            -webkit-box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.75);
+            -moz-box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.75);
+            box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.75);
+            cursor: pointer;
+        }
+
+        .settings .setting_item .setting_item_image {
+            height: 50%;
+            width: 60%;
+            text-align: center;
+            margin-bottom: 11%;
+        }
+
+            .settings .setting_item .setting_item_image i {
+                font-size: 30px;
+            }
+
+        .settings .setting_item .setting_item_name {
+            height: 30%;
+            width: 100%;
+            background-color: #12188c;
+            color: #fff;
+            display: flex;
+            flex-flow: column wrap;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+        }
+
+            .settings .setting_item .setting_item_name p {
+                padding: 0;
+                margin: 0;
+                font-size: 9px;
+            }
+
+
+.setting_detail {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+}
+
+    .setting_detail .setting_sub_item {
+        width: 8%;
+        height: 100%;
+    }
+
+        .setting_detail .setting_sub_item .card {
+            margin: 0;
+        }
+
+            .setting_detail .setting_sub_item .card .setting_sub_items {
+                display: flex;
+                flex-flow: column wrap;
+                justify-content: flex-start;
+                align-content: space-between;
+                display: none;
+            }
+
+                .setting_detail .setting_sub_item .card .setting_sub_items .sub_item {
+                    width: 100%;
+                    height: 70px;
+                    display: flex;
+                    flex-flow: column wrap;
+                    justify-content: flex-end;
+                    align-items: center;
+                    -webkit-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 3px 10px 0 rgba(0, 0, 0, 0.005);
+                    -moz-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 3px 10px 0 rgba(0, 0, 0, 0.005);
+                    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 3px 10px 0 rgba(0, 0, 0, 0.005);
+                    margin-bottom: 8px;
+                }
+
+                    .setting_detail .setting_sub_item .card .setting_sub_items .sub_item:hover {
+                        border: 2px solid #12188c;
+                        -webkit-box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.75);
+                        -moz-box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.75);
+                        box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.75);
+                        cursor: pointer;
+                    }
+
+                    .setting_detail .setting_sub_item .card .setting_sub_items .sub_item .sub_item_image {
+                        height: 70%;
+                        width: 100%;
+                        text-align: center;
+                    }
+
+                        .setting_detail .setting_sub_item .card .setting_sub_items .sub_item .sub_item_image i {
+                            font-size: 30px;
+                        }
+
+                    .setting_detail .setting_sub_item .card .setting_sub_items .sub_item .sub_item_name {
+                        height: 30%;
+                        width: 100%;
+                        background-color: #12188c;
+                        color: #fff;
+                        display: flex;
+                        flex-flow: column wrap;
+                        justify-content: center;
+                        align-items: center;
+                        font-weight: 600;
+                    }
+
+                        .setting_detail .setting_sub_item .card .setting_sub_items .sub_item .sub_item_name p {
+                            padding: 0;
+                            margin: 0;
+                            font-size: 9px;
+                        }
+
+    .setting_detail .setting_sub_item_detail {
+        width: 91%;
+        height: 100%;
+    }
