@@ -21,7 +21,7 @@
             <div class="card">
                 <div id="headingOne" class="card-header bg-blue1">
                     <button type="button" data-toggle="collapse" data-target="#Collapse" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
-                        <h5 class="m-0 p-0" style="color: #fff;">Add Supplier</h5>
+                        <h5 class="m-0 p-0" style="color: #fff;">Add Customer</h5>
                     </button>
                 </div>
                 <div class="card-body">
@@ -88,7 +88,7 @@
         <div class="card">
             <div id="headingTwo" class="card-header bg-blue1">
                 <button type="button" data-toggle="collapse" data-target="#Collapse" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
-                    <h5 class="m-0 p-0" style="color: #fff;">Supplier List</h5>
+                    <h5 class="m-0 p-0" style="color: #fff;">Customer List</h5>
                 </button>
             </div>
             <div class="card-body table-responsive">
@@ -128,7 +128,7 @@
                 profession: $("#Profession"),
                 phone: $("#Phone"),
                 supplierCreateBtn: $("#customerCreateBtn"),
-                supplierCreateForm: $("#customerCreateForm"),
+                supplierCreateForm: $("#CustomerCreateForm"),
                 supplierList: $("#customerList"),
                 supplierResetBtn: $("#customerResetBtn"),
                 tableInformation: '',
@@ -184,7 +184,7 @@
                 }
             });
 
-            function GenerateSupplierList() {
+            function GenerateCustomerList() {
                 var supplierList = selector.supplierList.dataTable({
                     "processing": true,
                     "serverSide": true,
@@ -194,7 +194,7 @@
                     "lengthMenu": [[10, 50, 100, 150, 200, 500], [10, 50, 100, 150, 200, 500]],
                     "order": [[0, "desc"]],
                     "ajax": {
-                        "url": "/User/SupplierList/",
+                        "url": "/User/CustomerList/",
                         "type": "POST",
                         "data": function (data) {
 
@@ -223,20 +223,30 @@
                         { "data": "address", "name": "address", "autowidth": true, "orderable": true },
                         {
                             "render": function (data, type, full, meta) {
-                                return `<img src = ${full.photoUrl} width = "20" height = "20"/>`;
+                                if(full.photoUrl !== ""){
+                                    return `<img src = "${full.photoUrl}" width = "20" height = "20" alt = "None"/>`;
+                                }
+                                else{
+                                    return "";
+                                }
                             }
                         },
                         {
                             "render": function (data, type, full, meta) {
-                                return `
-                            <div class="btn-group">
-                                <i class="fa fa-ellipsis-h" title = 'Actions' style = 'cursor:pointer;' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-                              <div class="dropdown-menu" >
-                                <button style="font-size: inherit;" class="dropdown-item btn-rx viewSupplierInformation" supplierId = "${full.id}" ><i class="fa fa-info-circle" aria-hidden="true"></i>View</button >
-                                <button style="font-size: inherit;" class="dropdown-item btn-rx editSupplierInformation" name = "${full.name}" companyName = "${full.companyName}" designation = "${full.designation}" phone = "${full.phone}" email = "${full.email}" address = "${full.address}" nid = "${full.nid}" supplierId = "${full.id}" ><i class="fa fa-check-circle" aria-hidden="true"></i>Edit</button >
-                                <button style="font-size: inherit;" class="dropdown-item btn-rx deleteSupplierInformation" supplierId = "${full.id}" > <i class="fa fa-times" aria-hidden="true"></i>Delete</button >
-                              </div>
-                            </div>`;
+                                if(full.name !== "Walk in Customer"){
+                                    return `
+                                        <div class="btn-group">
+                                            <i class="fa fa-ellipsis-h" title = 'Actions' style = 'cursor:pointer;' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                                        <div class="dropdown-menu" >
+                                            <button style="font-size: inherit;" class="dropdown-item btn-rx viewCustomerInformation" customerId = "${full.id}" ><i class="fa fa-info-circle" aria-hidden="true"></i>View</button >
+                                            <button style="font-size: inherit;" class="dropdown-item btn-rx editCustomerInformation" profession = "${full.profession}"  name = "${full.name}" companyName = "${full.companyName}" designation = "${full.designation}" phone = "${full.phone}" email = "${full.email}" address = "${full.address}" nid = "${full.nid}" customerId = "${full.id}" ><i class="fa fa-check-circle" aria-hidden="true"></i>Edit</button >
+                                            <button style="font-size: inherit;" class="dropdown-item btn-rx deleteCustomerInformation" customerId = "${full.id}" > <i class="fa fa-times" aria-hidden="true"></i>Delete</button >
+                                        </div>
+                                        </div>`;
+                                }
+                                else{
+                                    return "";
+                                }
                             }
                         },
                     ]
@@ -244,7 +254,7 @@
                 selector.tableInformation = supplierList;
             }
 
-            function ShowEditInformation(name, email, address, nid, phone, companyName, designation){
+            function ShowEditInformation(name, email, address, nid, phone, companyName, designation, profession){
                 selector.name.val(name);
                 selector.email.val(email);
                 selector.address.val(address);
@@ -252,6 +262,7 @@
                 selector.companyName.val(companyName);
                 selector.phone.val(phone);
                 selector.designation.val(designation);
+                selector.profession.val(profession);
             }
 
             selector.supplierCreateBtn.click(function () {
@@ -294,15 +305,15 @@
             });
 
             window.onload = function () {
-                //GenerateSupplierList();
+                GenerateCustomerList();
             }
 
             selector.supplierResetBtn.click(function () {
                 selector.supplierCreateForm[0].reset();
             });
 
-            $(document).on("click", ".editSupplierInformation", function () {
-                selector.globalId = $(this).attr("supplierId");
+            $(document).on("click", ".editCustomerInformation", function () {
+                selector.globalId = $(this).attr("customerId");
                 let name = $(this).attr("name");
                 let email = $(this).attr("email");
                 let address = $(this).attr("address");
@@ -310,12 +321,13 @@
                 let phone = $(this).attr("phone");
                 let companyName = $(this).attr("companyName");
                 let designation = $(this).attr("designation");
-                ShowEditInformation(name, email, address, nid, phone, companyName, designation);
+                let profession = $(this).attr("profession");
+                ShowEditInformation(name, email, address, nid, phone, companyName, designation, profession);
                 selector.supplierCreateBtn.text("Update");
             });
 
-            $(document).on("click", ".deleteSupplierInformation", function () {
-                let supplierId = $(this).attr("supplierId");
+            $(document).on("click", ".deleteCustomerInformation", function () {
+                let supplierId = $(this).attr("customerId");
                 Swal.fire({
                     title: 'Are You Sure?',
                     text: "",
@@ -330,7 +342,7 @@
 
                 }).then((result) => {
                     if (result.value) {
-                        let hasDone = ajaxOperation.DeleteAjaxById("/User/DeleteSupplier", supplierId);
+                        let hasDone = ajaxOperation.DeleteAjaxById("/User/DeleteCustomer", supplierId);
                         if (hasDone === true) {
                             toastr.success('Successfully Deleted!', 'Success');
                             selector.tableInformation.fnFilter();
@@ -342,11 +354,11 @@
                 });
             });
 
-            $(document).on("click", ".viewSupplierInformation", function () {
-                let supplierId = $(this).attr("supplierId");
-                let htmlData = ajaxOperation.GetAjaxHtmlByValue("/User/SupplierInformation", supplierId);
+            $(document).on("click", ".viewCustomerInformation", function () {
+                let supplierId = $(this).attr("customerId");
+                let htmlData = ajaxOperation.GetAjaxHtmlByValue("/User/CustomerInformation", supplierId);
 
-                $("#modalHeading").text("Supplier Information");
+                $("#modalHeading").text("Customer Information");
                 modalOperation.ModalStatic("#informationModal");
                 modalOperation.ModalOpenWithHtml("#informationModal", "#informationModalDiv", htmlData);
             });

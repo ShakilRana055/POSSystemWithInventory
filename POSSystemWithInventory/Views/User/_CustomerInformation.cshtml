@@ -1,0 +1,43 @@
+﻿
+@model POSSystemWithInventory.Models.CustomerVM
+
+
+<div class="row">
+    <div class="col-md-1">
+
+    </div>
+    <div class="col-md-10">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td>Name : @Model.Name</td>
+                    <td rowspan="8"><img src="@Model.PhotoUrl" width="150" height="150" /></td>
+                </tr>
+                <tr>
+                    <td>Profession : @Model.Profession</td>
+                </tr>
+                <tr>
+                    <td>Designation : @Model.Designation</td>
+                </tr>
+                <tr>
+                    <td>Company Name : @Model.CompanyName</td>
+                </tr>
+                <tr>
+                    <td>Phone : @Model.Phone</td>
+                </tr>
+                <tr>
+                    <td>Email : @Model.Email</td>
+                </tr>
+                <tr>
+                    <td>Address : @Model.Address</td>
+                </tr>
+                <tr>
+                    <td>NID : @Model.NID</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-1">
+
+    </div>
+</div>

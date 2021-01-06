@@ -196,12 +196,24 @@ namespace POSSystemWithInventory.Controllers
         #endregion
 
         #region Customer
+
+        private void GenerateCustomer(){
+            Customer customer = new Customer(){
+                Name = "Walk in Customer",
+            };
+            context.Customer.Add(customer);
+            context.Save();
+        }
+
         public IActionResult Customer()
         {
+            var customerExist = context.Customer.GetAll().ToList();
+            if(customerExist.Count == 0 ){
+                GenerateCustomer();
+            }
             CustomerVM customer = new CustomerVM();
             return View(customer);
         }
-
         [HttpPost]
         public IActionResult Customer(CustomerVM customerVM)
         {
@@ -240,7 +252,6 @@ namespace POSSystemWithInventory.Controllers
                 return Json(ex.Message);
             }
         }
-
         public IActionResult CustomerList()
         {
             var draw = Request.Form["draw"].FirstOrDefault();
@@ -284,6 +295,85 @@ namespace POSSystemWithInventory.Controllers
             recordsTotal = lists.Count();   
             var data = lists.Skip(skip).Take(pageSize).ToList(); 
             return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
+        }
+        public IActionResult CustomerUpdate(CustomerVM customerVM)
+        {
+            try
+            {
+                var customer = context.Customer.Find(x => x.Id == customerVM.Id).FirstOrDefault();
+                if(customer != null)
+                {
+                    customer.Name = customerVM.Name;
+                    customer.Email = customerVM.Email;
+                    customer.NID = customerVM.NID;
+                    customer.Address = customerVM.Address;
+                    customer.Phone = customerVM.Phone;
+                    customer.CompanyName = customerVM.CompanyName;
+                    customer.Designation = customerVM.Designation;
+                    customer.Profession = customerVM.Profession;
+
+                    if (customerVM.Photo != null)
+                    {
+                        var fileName = ContentDispositionHeaderValue.Parse(customerVM.Photo.ContentDisposition).FileName.Trim('"').Replace(" ", string.Empty);
+                        List<string> separate = fileName.Split(".").ToList();
+                        fileName = separate[0] + DateTime.Now.ToString("dddd_dd_MMMM_yyyy_HH_mm_ss") + "." + separate[1];
+                        string path = image.GetImagePath(fileName, "Customer");
+                        using (var stream = new FileStream(path, FileMode.Create))
+                        {
+                            customerVM.Photo.CopyTo(stream);
+                        }
+                        customer.PhotoUrl = image.GetImagePathForDb(path);
+                    }
+                    context.Save();
+                    return Json(true);
+                }
+                else
+                {
+                    return Json(false);
+                }
+            }catch(Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult DeleteCustomer(int id)
+        {
+            try
+            {
+                var customer = context.Customer.Find(x => x.Id == id).FirstOrDefault();
+                if( customer != null)
+                {
+                    context.Customer.Remove(customer);
+                    context.Save();
+                    return Json(true);
+                }
+                else
+                {
+                    return Json(false);
+                }
+            }
+            catch ( Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult CustomerInformation(int search)
+        {
+            var customer = context.Customer.Find(x => x.Id == search).FirstOrDefault();
+            CustomerVM customerVM = new CustomerVM()
+            {
+                Name = customer.Name,
+                Email = customer.Email,
+                Address = customer.Address,
+                NID = customer.NID,
+                PhotoUrl = customer.PhotoUrl,
+                CompanyName = customer.CompanyName,
+                Phone = customer.Phone,
+                Designation = customer.Designation,
+                Profession = customer.Profession,
+
+            };
+            return PartialView("_CustomerInformation", customerVM);
         }
         #endregion 
     }
