@@ -1,23 +1,23 @@
-﻿@model POSSystemWithInventory.Models.SupplierVM
+﻿@model POSSystemWithInventory.Models.CustomerVM
 
 @{
-    ViewData["Title"] = "Supplier";
+    ViewData["Title"] = "Customer";
     Layout = "~/Views/Shared/_POSLayout.cshtml";
 }
 
 <style>
-    .odd{
+    .odd {
         background-color: #b3ffff;
     }
 
-    .even{
+    .even {
         background-color: #b3b3ff;
     }
 </style>
 
 <div class="row">
     <div class="col-md-6">
-        <form id="supplierCreateForm" enctype="multipart/form-data">
+        <form id="CustomerCreateForm" enctype="multipart/form-data">
             <div class="card">
                 <div id="headingOne" class="card-header bg-blue1">
                     <button type="button" data-toggle="collapse" data-target="#Collapse" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
@@ -32,6 +32,11 @@
                                     <label asp-for="Name" class="control-label"></label>
                                     <input asp-for="Name" class="form-control" />
                                     <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Profession" class="control-label"></label>
+                                    <input asp-for="Profession" class="form-control" />
+                                    <span asp-validation-for="Profession" class="text-danger"></span>
                                 </div>
                                 <div class="form-group">
                                     <label asp-for="Phone" class="control-label"></label>
@@ -72,8 +77,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" id="supplierResetBtn">Reset</button>
-                        <button type="button" id="supplierCreateBtn" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-secondary" id="customerResetBtn">Reset</button>
+                        <button type="button" id="customerCreateBtn" class="btn btn-primary">Save</button>
                     </div>
                 </div>
             </div>
@@ -87,8 +92,8 @@
                 </button>
             </div>
             <div class="card-body table-responsive">
-                <table class="table table-hover table-bordered" id="supplierList" >
-                    <thead style = "background-color: #ffd9b3;"> 
+                <table class="table table-hover table-bordered" id="customerList">
+                    <thead style="background-color: #ffd9b3;">
                         <tr>
                             <th>Name</th>
                             <th>Contact</th>
@@ -98,7 +103,6 @@
                         </tr>
                     </thead>
                     <tbody>
-
                     </tbody>
                 </table>
             </div>
@@ -121,11 +125,12 @@
                 photo: $("#Photo"),
                 companyName: $("#CompanyName"),
                 designation: $("#Designation"),
+                profession: $("#Profession"),
                 phone: $("#Phone"),
-                supplierCreateBtn: $("#supplierCreateBtn"),
-                supplierCreateForm: $("#supplierCreateForm"),
-                supplierList: $("#supplierList"),
-                supplierResetBtn: $("#supplierResetBtn"),
+                supplierCreateBtn: $("#customerCreateBtn"),
+                supplierCreateForm: $("#customerCreateForm"),
+                supplierList: $("#customerList"),
+                supplierResetBtn: $("#customerResetBtn"),
                 tableInformation: '',
                 globalId: '',
             };
@@ -155,6 +160,9 @@
                     },
                     CompanyName:{
                         required: true
+                    },
+                    Profession: {
+                        required: true
                     }
                 },
                 // Specify validation error messages
@@ -167,14 +175,14 @@
                     Phone: "Phone number is required",
                     Designation: "Designation is required",
                     CompanyName: "Company name is required",
-
+                    Profession: "Profession is required",
                 },
                 // Make sure the form is submitted to the destination defined
                 // in the "action" attribute of the form when valid
                 submitHandler: function (form) {
 
                 }
-            }); 
+            });
 
             function GenerateSupplierList() {
                 var supplierList = selector.supplierList.dataTable({
@@ -189,7 +197,7 @@
                         "url": "/User/SupplierList/",
                         "type": "POST",
                         "data": function (data) {
-                           
+
                         },
                         "complete": function (json) {
 
@@ -225,8 +233,8 @@
                                 <i class="fa fa-ellipsis-h" title = 'Actions' style = 'cursor:pointer;' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
                               <div class="dropdown-menu" >
                                 <button style="font-size: inherit;" class="dropdown-item btn-rx viewSupplierInformation" supplierId = "${full.id}" ><i class="fa fa-info-circle" aria-hidden="true"></i>View</button >
-                                <button style="font-size: inherit;" class="dropdown-item btn-rx editSupplierInformation" name = "${full.name}" companyName = "${full.companyName}" designation = "${full.designation}" phone = "${full.phone}" email = "${full.email}" address = "${full.address}" nid = "${full.nid}" supplierId = "${full.id}" ><i class="fa fa-check-circle" aria-hidden="true"></i>Edit</button >                                
-                                <button style="font-size: inherit;" class="dropdown-item btn-rx deleteSupplierInformation" supplierId = "${full.id}" > <i class="fa fa-times" aria-hidden="true"></i>Delete</button >                              
+                                <button style="font-size: inherit;" class="dropdown-item btn-rx editSupplierInformation" name = "${full.name}" companyName = "${full.companyName}" designation = "${full.designation}" phone = "${full.phone}" email = "${full.email}" address = "${full.address}" nid = "${full.nid}" supplierId = "${full.id}" ><i class="fa fa-check-circle" aria-hidden="true"></i>Edit</button >
+                                <button style="font-size: inherit;" class="dropdown-item btn-rx deleteSupplierInformation" supplierId = "${full.id}" > <i class="fa fa-times" aria-hidden="true"></i>Delete</button >
                               </div>
                             </div>`;
                             }
@@ -253,7 +261,7 @@
                         let photo = selector.photo.get(0);
                         formData.append('Photo', photo.files);
 
-                        let data = ajaxOperation.SaveAjax("/User/Supplier", formData);
+                        let data = ajaxOperation.SaveAjax("/User/Customer", formData);
                         if (data === true) {
                             selector.tableInformation.fnFilter();
                             selector.supplierCreateForm[0].reset();
@@ -272,7 +280,7 @@
                     let photo = selector.photo.get(0);
                     formData.append('Photo', photo.files);
                     formData.append("Id", selector.globalId);
-                    let data = ajaxOperation.SaveAjax("/User/SupplierUpdate", formData);
+                    let data = ajaxOperation.SaveAjax("/User/CustomerUpdate", formData);
                     if (data === true) {
                         selector.tableInformation.fnFilter();
                         selector.supplierCreateForm[0].reset();
@@ -286,7 +294,7 @@
             });
 
             window.onload = function () {
-                GenerateSupplierList();
+                //GenerateSupplierList();
             }
 
             selector.supplierResetBtn.click(function () {

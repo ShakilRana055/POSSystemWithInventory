@@ -416,12 +416,15 @@
     <script src="~/layout/lib/toastr/toastr.min.js"></script>
 
     <script src="~/layout/js/site.js" asp-append-version="true"></script>
+
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.13.0/dist/sweetalert2.all.min.js"></script>
+
     <!--jquery frontend validation script -->
     <script src="~/layout/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 
     <!-- layout initialization like datepicker and select2 -->
-    <script src="~/layout/Pages/Common/Layout.js"></script>
+    @*<script src="~/layout/Pages/Common/Layout.js"></script>*@
     <script src="~/AjaxLibrary/AjaxOperation.js"></script>
 
     @* sweet alert2 *@
@@ -434,3 +437,20 @@
     @RenderSection("Scripts", required: false)
 </body>
 </html>
+
+
+<div id="informationModal" class="modal fade bs-example-modal-center" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title mt-0" id="exampleModalLabel"><i class="fa fa-universal-access"><span id="modalHeading">Add Role</span> </i></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="informationModalDiv">
+
+            </div>
+        </div>
+    </div>
+</div>
