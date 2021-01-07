@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using POSSystemWithInventory.EntityModel;
@@ -11,77 +9,55 @@ using POSSystemWithInventory.RepositoryPattern.Interfaces.IUnitOfWork;
 
 namespace POSSystemWithInventory.Controllers
 {
-    public class BrandController : Controller
+    public class CategoryController : Controller
     {
         private readonly IUnitOfWork context;
         private readonly IImageProcessing image;
-
-        public BrandController(IUnitOfWork unitOfWork, IImageProcessing imageProcessing)
+        public CategoryController(IUnitOfWork unitOfWork, IImageProcessing imageProcessing)
         {
             context = unitOfWork;
             image = imageProcessing;
         }
+        
+        #region Category CRUD
         public IActionResult Index()
         {
-            BrandVM brand = new BrandVM();
-            return View(brand);
+            CategoryVM categoryVm = new CategoryVM();
+            return View(categoryVm);
         }
         [HttpPost]
-        public IActionResult Index( BrandVM brandVM)
+        public IActionResult Index(CategoryVM categoryVm)
         {
             try
             {
-                Brand brand = new Brand()
+                Category category = new Category()
                 {
-                    Name = brandVM.Name,
-                    Code = brandVM.Code,
-                    Description = brandVM.Description,
-
+                    Name = categoryVm.Name,
+                    Code = categoryVm.Code,
+                    Description = categoryVm.Description,
                 };
-                if (brandVM.Logo != null)
-                {
-                    var fileName = ContentDispositionHeaderValue.Parse(brandVM.Logo.ContentDisposition).FileName.Trim('"').Replace(" ", string.Empty);
-                    List<string> separate = fileName.Split(".").ToList();
-                    fileName = separate[0] + DateTime.Now.ToString("dddd_dd_MMMM_yyyy_HH_mm_ss") + "." + separate[1];
-                    string path = image.GetImagePath(fileName, "Brand");
-                    using (var stream = new FileStream(path, FileMode.Create))
-                    {
-                        brandVM.Logo.CopyTo(stream);
-                    }
-                    brand.LogoUrl = image.GetImagePathForDb(path);
-                }
-                context.Brand.Add(brand);
+                context.Category.Add(category);
                 context.Save();
                 return Json(true);
             }
             catch (Exception ex)
             {
                 return Json(ex.Message);
+                throw;
             }
         }
-        public IActionResult BrandUpdate(BrandVM brandVM)
+        public IActionResult CategoryUpdate(CategoryVM categoryVM)
         {
             try
             {
-                var brand = context.Brand.Find(x => x.Id == brandVM.Id).FirstOrDefault();
-                if (brand != null)
+                var category = context.Category.Find(x => x.Id == categoryVM.Id).FirstOrDefault();
+                if(category != null)
                 {
-                    brand.Name = brandVM.Name;
-                    brand.Code = brandVM.Code;
-                    brand.Description = brandVM.Description;
-
-                    if (brandVM.Logo != null)
-                    {
-                        var fileName = ContentDispositionHeaderValue.Parse(brandVM.Logo.ContentDisposition).FileName.Trim('"').Replace(" ", string.Empty);
-                        List<string> separate = fileName.Split(".").ToList();
-                        fileName = separate[0] + DateTime.Now.ToString("dddd_dd_MMMM_yyyy_HH_mm_ss") + "." + separate[1];
-                        string path = image.GetImagePath(fileName, "Brand");
-                        using (var stream = new FileStream(path, FileMode.Create))
-                        {
-                            brandVM.Logo.CopyTo(stream);
-                        }
-                        brand.LogoUrl = image.GetImagePathForDb(path);
-                    }
+                    category.Name = categoryVM.Name;
+                    category.Code = categoryVM.Code;
+                    category.Description = categoryVM.Description;
+                    category.IsUpdated = true;
+                    category.UpdatedDate = DateTime.Now.ToShortDateString();
                     context.Save();
                     return Json(true);
                 }
@@ -90,33 +66,33 @@ namespace POSSystemWithInventory.Controllers
                     return Json(false);
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 return Json(ex.Message);
+                throw;
             }
         }
-        public IActionResult DeleteBrand(int id)
+        public IActionResult DeleteCategory(int id)
         {
             try
             {
-                var brand = context.Brand.Find(x => x.Id == id).FirstOrDefault();
-                if (brand != null)
+                var category = context.Category.Find(x => x.Id == id).FirstOrDefault();
+                if (category != null)
                 {
-                    context.Brand.Remove(brand);
+                    context.Category.Remove(category);
                     context.Save();
                     return Json(true);
                 }
                 else
-                {
                     return Json(false);
-                }
             }
             catch (Exception ex)
             {
                 return Json(ex.Message);
+                throw;
             }
         }
-        public IActionResult BrandList()
+        public IActionResult CategoryList()
         {
             var draw = Request.Form["draw"].FirstOrDefault();
             var start = Request.Form["start"].FirstOrDefault();
@@ -129,7 +105,7 @@ namespace POSSystemWithInventory.Controllers
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
 
-            var brandList = context.Brand.GetAll().ToList();
+            var categoryList = context.Category.GetAll().ToList();
 
             #region Filtering table data
             // searching 
@@ -137,11 +113,11 @@ namespace POSSystemWithInventory.Controllers
             {
                 try
                 {
-                    var filterBrandList = brandList.Where(
+                    var filterCategoryList = categoryList.Where(
                         x => x.Name.ToLower().Contains(searchValue) ||
                         x.Code.ToLower().Contains(searchValue) ||
                         x.Description.ToLower().Contains(searchValue)).ToList();
-                    brandList = filterBrandList;
+                    categoryList = filterCategoryList;
                 }
                 catch (Exception ex)
                 {
@@ -151,7 +127,7 @@ namespace POSSystemWithInventory.Controllers
 
             #endregion
 
-            var lists = brandList.OrderByDescending(x => x.Id).ToList();
+            var lists = categoryList.OrderByDescending(x => x.Id).ToList();
 
             //total number of rows count     
             recordsTotal = lists.Count();
@@ -162,5 +138,6 @@ namespace POSSystemWithInventory.Controllers
             //Returning Json Data    
             return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
         }
+        #endregion
     }
 }

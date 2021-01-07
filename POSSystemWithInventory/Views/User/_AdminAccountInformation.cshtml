@@ -1,0 +1,31 @@
+﻿
+@model POSSystemWithInventory.Models.AdminAccountVM
+
+
+<div class="row">
+    <div class="col-md-1">
+
+    </div>
+    <div class="col-md-10">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td>Name : @Model.Name</td>
+                    <td rowspan="4"><img src="@Model.PhotoUrl" width="150" height="150" alt="No Image" /></td>
+                </tr>
+                <tr>
+                    <td>User Name : @Model.UserName</td>
+                </tr>
+                <tr>
+                    <td>Email : @Model.Email</td>
+                </tr>
+                <tr>
+                    <td>Created Date : @Model.CreatedDate</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-1">
+
+    </div>
+</div>

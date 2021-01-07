@@ -9,5 +9,6 @@ namespace POSSystemWithInventory.EntityModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string ShortForm { get; set; }
     }
 }

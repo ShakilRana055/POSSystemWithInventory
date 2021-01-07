@@ -51,7 +51,6 @@ class AjaxOperation {
             url: destination,
             method: "GET",
             data: ({ "search": value }),
-            dataType: "JSON",
             async: false,
             success: function (response) {
                 getAjaxByValue = response;

@@ -1,0 +1,167 @@
+﻿@model POSSystemWithInventory.Models.ProductVM
+@{
+    ViewData["Title"] = "Product List";
+    Layout = "~/Views/Shared/_POSLayout.cshtml";
+}
+
+<style>
+    .odd {
+        background-color: #b3ffff;
+    }
+
+    .even {
+        background-color: #b3b3ff;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <form id="" enctype="multipart/form-data">
+            <div class="card">
+                <div id="headingOne" class="card-header bg-blue1">
+                    <button type="button" data-toggle="collapse" data-target="#advanceSearchProduct" aria-expanded="false" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
+                        <h5 class="m-0 p-0" style="color: #fff;">Advance Options</h5>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="advanceSearchProduct" class="collapse show">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="BrandId" class="control-label">Brand</label>
+                                    <select class="form-control select2" asp-for="BrandId" asp-items="@Model.BrandItem">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="CategoryId" class="control-label">Category</label>
+                                    <select class="form-control select2" asp-for="CategoryId" asp-items="@Model.CategoryItem">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="UnitId" class="control-label">Unit</label>
+                                    <select class="form-control select2" asp-for="UnitId" asp-items="@Model.UnitItem">
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="clearAdvanceFilter">Clear</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-md-12">
+        <div class="card">
+            <div id="headingOne" class="card-header bg-blue1">
+                <button type="button" data-toggle="collapse" data-target="#advanceSearchProductList" aria-expanded="false" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
+                    <h5 class="m-0 p-0" style="color: #fff;">Product List</h5>
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="advanceSearchProductList" class="collapse show">
+                    <div class="row table-responsive">
+                        <table class="table table-hover table-bordered" id="productList">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Brand</th>
+                                    <th>Category</th>
+                                    <th>Unit</th>
+                                    <th>Warning Quantity</th>
+                                    <th>Photo</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts{
+        <script>
+        (function () {
+
+            let selector = {
+                productList: $("#productList"),
+            };
+            
+            function GenerateBrandList() {
+                var brandList = selector.productList.dataTable({
+                    "processing": true,
+                    "serverSide": true,
+                    "filter": true,
+                    "pageLength": 10,
+                    "autoWidth": false,
+                    "lengthMenu": [[10, 50, 100, 150, 200, 500], [10, 50, 100, 150, 200, 500]],
+                    "order": [[0, "desc"]],
+                    "ajax": {
+                        "url": "/Product/ProductList/",
+                        "type": "POST",
+                        "data": function (data) {
+
+                        },
+                        "complete": function (json) {
+
+                        }
+                    },
+                    "columnDefs": [
+                        { "className": "custome", "targets": [0, 1, 2, 3] },
+                    ],
+                    "columns": [
+                        { "data": "name", "name": "name", "autowidth": true, "orderable": true },
+                        {
+                            "render": function (data, type, full, meta) {
+                                return full.brand !== null ? full.brand.name : "";
+                            }
+                        },
+                        {
+                            "render": function (data, type, full, meta) {
+                                return full.category !== null ? full.category.name : "";
+                            }
+                        },
+                        {
+                            "render": function (data, type, full, meta) {
+                                return full.unit !== null ? full.unit.shortForm : "";
+                            }
+                        },
+                        { "data": "warningQuantity", "name": "warningQuantity", "autowidth": true, "orderable": true },
+                        {
+                            "render": function (data, type, full, meta) {
+                                return `<img src = ${full.photoUrl} width = "20" height = "20"/>`;
+                            }
+                        },
+                        {
+                            "render": function (data, type, full, meta) {
+                                return `
+                                <div class="btn-group">
+                                    <i class="fa fa-ellipsis-h" title = 'Actions' style = 'cursor:pointer;' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                                  <div class="dropdown-menu" >
+                                    <button style="font-size: inherit;" class="dropdown-item btn-rx viewProductInformation"  productId = "${full.id}" ><i class="fa fa-info-circle" aria-hidden="true"></i>View</button >
+                                    <button style="font-size: inherit;" class="dropdown-item btn-rx editProductInformation"  productId = "${full.id}" ><i class="fa fa-check-circle" aria-hidden="true"></i>Edit</button >
+                                    <button style="font-size: inherit;" class="dropdown-item btn-rx deleteProductInformation" productId = "${full.id}" > <i class="fa fa-times" aria-hidden="true"></i>Delete</button >
+                                  </div>
+                                </div>`;
+                            }
+                        },
+                    ]
+                });
+                selector.tableInformation = brandList;
+            }
+
+            window.onload = function () {
+                GenerateBrandList();
+            }
+
+        })();
+        </script>
+    }

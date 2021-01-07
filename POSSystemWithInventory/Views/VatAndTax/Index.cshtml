@@ -1,0 +1,249 @@
+﻿@model POSSystemWithInventory.Models.VatAndTaxVM
+
+@{
+    ViewData["Title"] = "Vat & Tax";
+    Layout = "~/Views/Shared/_POSLayout.cshtml";
+}
+
+<style>
+    .odd {
+        background-color: #b3ffff;
+    }
+
+    .even {
+        background-color: #b3b3ff;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-6">
+        <form id="vatAndTaxCreateForm" enctype="multipart/form-data">
+            <div class="card">
+                <div id="headingOne" class="card-header bg-blue1">
+                    <button type="button" data-toggle="collapse" data-target="#Collapse" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
+                        <h5 class="m-0 p-0" style="color: #fff;">Add Vat & Tax</h5>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="Collapse" class="collapse show">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label asp-for="Name" class="control-label"></label>
+                                    <input asp-for="Name" class="form-control" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Amount" class="control-label">Percentage</label>
+                                    <input asp-for="Amount" type="number" class="form-control" />
+                                    <span asp-validation-for="Amount" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="vatAndTaxResetBtn">Reset</button>
+                        <button type="button" id="vatAndTaxCreateBtn" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div id="headingTwo" class="card-header bg-blue1">
+                <button type="button" data-toggle="collapse" data-target="#Collapse" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
+                    <h5 class="m-0 p-0" style="color: #fff;">Vat & Tax List</h5>
+                </button>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-hover table-bordered" id="vatAndTaxList">
+                    <thead style="background-color: #ffd9b3;">
+                        <tr>
+                            <th>Name</th>
+                            <th>Percentage</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        (function () {
+            let ajaxOperation = new AjaxOperation();
+            let modalOperation = new ModalOperation();
+
+            let selector = {
+                name: $("#Name"),
+                amount: $("#Amount"),
+                vatAndTaxCreateBtn: $("#vatAndTaxCreateBtn"),
+                vatAndTaxCreateForm: $("#vatAndTaxCreateForm"),
+                vatAndTaxList: $("#vatAndTaxList"),
+                vatAndTaxResetBtn: $("#vatAndTaxResetBtn"),
+                tableInformation: '',
+                globalId: '',
+            };
+            let validator = selector.vatAndTaxCreateForm.validate({
+                // Specify validation rules
+                rules: {
+                    Name: {
+                        required: true,
+                    },
+                    Amount: {
+                        required: true,
+                    },
+                },
+                // Specify validation error messages
+                messages: {
+                    Name: "Name Field is required",
+                    Amount: "Can't Empty",
+                },
+                // Make sure the form is submitted to the destination defined
+                // in the "action" attribute of the form when valid
+                submitHandler: function (form) {
+
+                }
+            });
+
+            function GenerateVatAndTaxList() {
+                var vatAndTaxList = selector.vatAndTaxList.dataTable({
+                    "processing": true,
+                    "serverSide": true,
+                    "filter": true,
+                    "pageLength": 10,
+                    "autoWidth": false,
+                    "lengthMenu": [[10, 50, 100, 150, 200, 500], [10, 50, 100, 150, 200, 500]],
+                    "order": [[0, "desc"]],
+                    "ajax": {
+                        "url": "/VatAndTax/VatAndTaxList/",
+                        "type": "POST",
+                        "data": function (data) {
+
+                        },
+                        "complete": function (json) {
+
+                        }
+                    },
+                    "columnDefs": [
+                        { "className": "custome", "targets": [0, 1, 2] },
+                    ],
+                    "columns": [
+                        { "data": "name", "name": "name", "autowidth": true, "orderable": true },
+                        {
+                            "render": function (data, type, full, meta) {
+                                return full.amount.toFixed(2);
+                            }
+                        },
+                        {
+                            "render": function (data, type, full, meta) {
+                                return `
+                                <div class="btn-group">
+                                    <i class="fa fa-ellipsis-h" title = 'Actions' style = 'cursor:pointer;' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                                  <div class="dropdown-menu" >
+                                    <button style="font-size: inherit;" class="dropdown-item btn-rx editVatAndTaxInformation" name = "${full.name}" amount = "${full.amount}" vatAndTaxId = "${full.id}" ><i class="fa fa-check-circle" aria-hidden="true"></i>Edit</button >
+                                    <button style="font-size: inherit;" class="dropdown-item btn-rx deleteVatAndTaxInformation" vatAndTaxId = "${full.id}" > <i class="fa fa-times" aria-hidden="true"></i>Delete</button >
+                                  </div>
+                                </div>`;
+                            }
+                        },
+                    ]
+                });
+                selector.tableInformation = vatAndTaxList;
+            }
+
+            function ShowEditInformation(name, amount){
+                selector.name.val(name);
+                selector.amount.val(amount);
+            }
+
+            selector.vatAndTaxCreateBtn.click(function () {
+                if($(this).text() === "Save"){
+                    if (selector.vatAndTaxCreateForm.valid()) {
+                        let formData = new FormData(selector.vatAndTaxCreateForm[0]);
+                        let data = ajaxOperation.SaveAjax("/VatAndTax/Index", formData);
+
+                        if (data === true) {
+                            selector.tableInformation.fnFilter();
+                            selector.vatAndTaxCreateForm[0].reset();
+                            toastr.success('Successfully Saved!', 'success');
+                        }
+                        else {
+                            toastr.error('Something went wrong!', 'error');
+                        }
+                    }
+                    else {
+                        toastr.error('Please fill up the form with valid information.', 'Validation Failed!');
+                    }
+                }
+                else{
+                    let formData = new FormData(selector.vatAndTaxCreateForm[0]);
+                    formData.append("Id", selector.globalId);
+
+                    let data = ajaxOperation.SaveAjax("/VatAndTax/VatAndTaxUpdate", formData);
+                    if (data === true) {
+                        selector.tableInformation.fnFilter();
+                        selector.vatAndTaxCreateForm[0].reset();
+                        toastr.success('Successfully Updated!', 'success');
+                        $(this).text("Save");
+                    }
+                    else {
+                        toastr.error('Something went wrong!', 'error');
+                    }
+                }
+            });
+
+            window.onload = function () {
+                GenerateVatAndTaxList();
+            }
+
+            selector.vatAndTaxResetBtn.click(function () {
+                selector.vatAndTaxCreateForm[0].reset();
+            });
+
+            $(document).on("click", ".editVatAndTaxInformation", function () {
+                selector.globalId = $(this).attr("vatAndTaxId");
+                let name = $(this).attr("name");
+                let amount = $(this).attr("amount");
+                ShowEditInformation(name, amount);
+                selector.vatAndTaxCreateBtn.text("Update");
+            });
+
+            $(document).on("click", ".deleteVatAndTaxInformation", function () {
+                let supplierId = $(this).attr("vatAndTaxId");
+                Swal.fire({
+                    title: 'Are You Sure?',
+                    text: "",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes',
+                    showConfirmButton: true,
+                    allowEscapeKey: false,
+                    allowOutsideClick: false,
+
+                }).then((result) => {
+                    if (result.value) {
+                        let hasDone = ajaxOperation.DeleteAjaxById("/VatAndTax/DeleteVatAndTax", supplierId);
+                        if (hasDone === true) {
+                            toastr.success('Successfully Deleted!', 'Success');
+                            selector.tableInformation.fnFilter();
+                        }
+                        else {
+                            toastr.error('Something went wrong', 'Error');
+                        }
+                    }
+                });
+            });
+
+        })();
+    </script>
+}
+

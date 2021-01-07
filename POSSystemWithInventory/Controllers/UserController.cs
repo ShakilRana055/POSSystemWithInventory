@@ -375,6 +375,162 @@ namespace POSSystemWithInventory.Controllers
             };
             return PartialView("_CustomerInformation", customerVM);
         }
-        #endregion 
+        #endregion
+
+        #region AdminLogin
+        public IActionResult AdminAccount()
+        {
+            AdminAccountVM adminAccount = new AdminAccountVM();
+            return View(adminAccount);
+        }
+        [HttpPost]
+        public IActionResult AdminAccount(AdminAccountVM adminAccountVM)
+        {
+            try
+            {
+                User userAccount = new User()
+                {
+                    Name = adminAccountVM.Name,
+                    UserName = adminAccountVM.UserName,
+                    Email = adminAccountVM.Email,
+                    Password = adminAccountVM.Password
+                };
+
+                if (adminAccountVM.Photo != null)
+                {
+                    var fileName = ContentDispositionHeaderValue.Parse(adminAccountVM.Photo.ContentDisposition).FileName.Trim('"').Replace(" ", string.Empty);
+                    List<string> separate = fileName.Split(".").ToList();
+                    fileName = separate[0] + DateTime.Now.ToString("dddd_dd_MMMM_yyyy_HH_mm_ss") + "." + separate[1];
+                    string path = image.GetImagePath(fileName, "AdminAccount");
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        adminAccountVM.Photo.CopyTo(stream);
+                    }
+                    userAccount.PhotoUrl = image.GetImagePathForDb(path);
+                }
+                context.User.Add(userAccount);
+                context.Save();
+                return Json(true);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult AdminAccountUpdate(AdminAccountVM adminAccountVM)
+        {
+            try
+            {
+                var adminAccount = context.User.Find( x => x.Id == adminAccountVM.Id).FirstOrDefault();
+                if( adminAccount != null)
+                {
+                    adminAccount.Name = adminAccountVM.Name;
+                    adminAccount.Email = adminAccountVM.Email;
+                    adminAccount.UserName = adminAccountVM.UserName;
+                    adminAccount.Password = adminAccountVM.Password == "" ? adminAccount.Password : adminAccountVM.Password;
+                    
+
+                    if (adminAccountVM.Photo != null)
+                    {
+                        var fileName = ContentDispositionHeaderValue.Parse(adminAccountVM.Photo.ContentDisposition).FileName.Trim('"').Replace(" ", string.Empty);
+                        List<string> separate = fileName.Split(".").ToList();
+                        fileName = separate[0] + DateTime.Now.ToString("dddd_dd_MMMM_yyyy_HH_mm_ss") + "." + separate[1];
+                        string path = image.GetImagePath(fileName, "AdminAccount");
+                        using (var stream = new FileStream(path, FileMode.Create))
+                        {
+                            adminAccountVM.Photo.CopyTo(stream);
+                        }
+                        adminAccount.PhotoUrl = image.GetImagePathForDb(path);
+                    }
+                    context.Save();
+                    return Json(true);
+                }
+                else
+                {
+                    return Json(false);
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+        }
+        public IActionResult AdminAccountList()
+        {
+            var draw = Request.Form["draw"].FirstOrDefault();
+            var start = Request.Form["start"].FirstOrDefault();
+            var length = Request.Form["length"].FirstOrDefault();
+            var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
+            var sortColumnDir = Request.Form["order[0][dir]"].FirstOrDefault();
+            var searchValue = Request.Form["search[value]"].FirstOrDefault().ToLower();
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int skip = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
+
+            var adminAccountList = context.User.GetAll().ToList();
+
+            #region Filtering table data
+            // searching 
+            if (searchValue != null)
+            {
+                try
+                {
+                    var filteredAdminAccountList = adminAccountList.Where(
+                        x => x.Name.ToLower().Contains(searchValue) ||
+                        x.Email.ToLower().Contains(searchValue) ||
+                        x.UserName.ToLower().Contains(searchValue)).ToList();
+                    adminAccountList = filteredAdminAccountList;
+                }
+                catch (Exception ex)
+                {
+
+                    throw ex;
+                }
+
+            }
+
+            #endregion
+
+            var lists = adminAccountList.OrderByDescending(x => x.Id).ToList();
+
+            //total number of rows count     
+            recordsTotal = lists.Count();
+
+            //Paging     
+            var data = lists.Skip(skip).Take(pageSize).ToList();
+
+            //Returning Json Data    
+            return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
+        }
+        public IActionResult AdminAccountInformation(int search)
+        {
+            var userAccount = context.User.Find(x => x.Id == search).FirstOrDefault();
+            if(userAccount != null)
+            {
+                AdminAccountVM adminAccountVM = new AdminAccountVM()
+                {
+                    Name = userAccount.Name,
+                    Email = userAccount.Email,
+                    UserName = userAccount.UserName,
+                    Password = userAccount.Password,
+                    PhotoUrl = userAccount.PhotoUrl,
+                    CreatedDate = userAccount.CreatedDate,
+                };
+                return PartialView("_AdminAccountInformation", adminAccountVM);
+            }
+            else
+            {
+                AdminAccountVM adminAccountVM = new AdminAccountVM();
+                return PartialView("_AdminAccountInformation", adminAccountVM);
+            }
+        }
+        public IActionResult AdminExist(string search)
+        {
+            var userAccount = context.User.Find(x => x.Email == search).FirstOrDefault();
+            return userAccount != null ? Json(false) : Json(true);
+        }
+        #endregion
     }
 }

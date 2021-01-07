@@ -1,0 +1,41 @@
+﻿@model POSSystemWithInventory.Models.ProductVM
+@{
+    ViewData["Title"] = "Product Information";
+    Layout = "~/Views/Shared/_POSLayout.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-md-1">
+
+    </div>
+    <div class="col-md-10">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td>Name : @Model.Name</td>
+                    <td rowspan="6"><img src="@Model.PhotoUrl" width="150" height="150" alt="No Image" /></td>
+                </tr>
+                <tr>
+                    <td>Brand : @Model.BrandName</td>
+                </tr>
+                <tr>
+                    <td>Category : @Model.CategoryName</td>
+                </tr>
+                <tr>
+                    <td>Unit : @Model.UnitName</td>
+                </tr>
+                <tr>
+                    <td>Description : @Model.Description</td>
+                </tr>
+                <tr>
+                    <td>Warning Quantity : @Model.WarningQuantity</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-1">
+
+    </div>
+</div>
+

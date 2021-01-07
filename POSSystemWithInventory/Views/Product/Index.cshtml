@@ -1,0 +1,179 @@
+﻿@model POSSystemWithInventory.Models.ProductVM
+@{
+    ViewData["Title"] = "Product";
+    Layout = "~/Views/Shared/_POSLayout.cshtml";
+}
+
+<style>
+    .odd {
+        background-color: #b3ffff;
+    }
+
+    .even {
+        background-color: #b3b3ff;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <form id="productCreateForm" enctype="multipart/form-data">
+            <div class="card">
+                <div id="headingOne" class="card-header bg-blue1">
+                    <button type="button" data-toggle="collapse" data-target="#Collapse" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
+                        <h5 class="m-0 p-0" style="color: #fff;">Add Product</h5>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="Collapse" class="collapse show">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Name" class="control-label"></label>
+                                    <input asp-for="Name" class="form-control" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Description" class="control-label"></label>
+                                    <textarea asp-for="Description" class="form-control" cols="3"></textarea>
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="Photo" class="control-label"></label>
+                                    <input asp-for="Photo" class="form-control" style="border:none;" />
+                                    <span asp-validation-for="Photo" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="WarningQuantity" class="control-label"></label>
+                                    <input asp-for="WarningQuantity" class="form-control" />
+                                    <span asp-validation-for="WarningQuantity" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="BrandId" class="control-label">Brand</label>
+                                    <select class="form-control select2" asp-for="BrandId" asp-items="@Model.BrandItem">
+                                    </select>
+                                    <span asp-validation-for="BrandId" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="CategoryId" class="control-label">Category</label>
+                                    <select class="form-control select2" asp-for="CategoryId" asp-items="@Model.CategoryItem">
+                                    </select>
+                                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="UnitId" class="control-label">Unit</label>
+                                    <select class="form-control select2" asp-for="UnitId" asp-items="@Model.UnitItem">
+                                    </select>
+                                    <span asp-validation-for="UnitId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="brandResetBtn">Reset</button>
+                        <button type="button" id="brandCreateBtn" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        (function () {
+            let ajaxOperation = new AjaxOperation();
+
+            let selector = {
+                name: $("#Name"),
+                description: $("#Description"),
+                photo: $("#Photo"),
+                warningQuantity: $("#WarningQuantity"),
+                categoryId: $("#CategoryId"),
+                brandId: $("#BrandId"),
+                unitId: $("#UnitId"),
+
+                brandCreateBtn: $("#brandCreateBtn"),
+                productCreateForm: $("#productCreateForm"),
+                brandList: $("#brandList"),
+                brandResetBtn: $("#brandResetBtn"),
+                tableInformation: '',
+                globalId: '',
+            };
+
+            let validator = selector.productCreateForm.validate({
+                // Specify validation rules
+                rules: {
+                    Name: {
+                        required: true,
+                    },
+                    Description: {
+                        required: true,
+                    },
+                    Photo: {
+                        required: true,
+                    },
+                    WarningQuantity: {
+                        required: true,
+                    },
+                    CategoryId: {
+                        required: true,
+                    },
+                    BrandId: {
+                        required: true,
+                    },
+                    UnitId: {
+                        required: true,
+                    },
+
+                },
+                // Specify validation error messages
+                messages: {
+                    Name: "Name Field is required",
+                    Description: "Description is required",
+                    UnitId: "Unit is required",
+                    BrandId: "Brand is required",
+                    CategoryId: "Category is required",
+                    WarningQuantity: "Warning Quantity is required",
+                    Photo: "Must include a photo",
+                },
+                // Make sure the form is submitted to the destination defined
+                // in the "action" attribute of the form when valid
+                submitHandler: function (form) {
+
+                }
+            });
+
+
+            selector.brandCreateBtn.click(function () {
+                if ($(this).text() === "Save") {
+                    if (selector.productCreateForm.valid()) {
+                        let formData = new FormData(selector.productCreateForm[0]);
+                        let photo = selector.photo.get(0);
+                        formData.append('Photo', photo.files);
+
+                        let data = ajaxOperation.SaveAjax("/Product/Index", formData);
+                        if (data === true) {
+                            selector.productCreateForm[0].reset();
+                            toastr.success('Successfully Saved!', 'success');
+                        }
+                        else {
+                            toastr.error('Something went wrong!', 'error');
+                        }
+                    }
+                    else {
+                        toastr.error('Please fill up the form with valid information.', 'Validation Failed!');
+                    }
+                }
+            });
+
+            selector.brandResetBtn.click(function () {
+                selector.productCreateForm[0].reset();
+            });
+
+        })();
+    </script>
+}
+

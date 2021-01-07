@@ -8,5 +8,7 @@ namespace POSSystemWithInventory.RepositoryPattern.Interfaces.GeneralInterface
 {
     public interface IProductRepository: IBaseRepository<Product>
     {
+        public List<Product> GetAllWithRelatedData();
+        public Product GetAllWithRelatedData(int id);
     }
 }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace POSSystemWithInventory.EntityModel
+namespace POSSystemWithInventory.Models
 {
-    public class Category:BaseClass
+    public class CategoryVM
     {
         public int Id { get; set; }
         public string Name { get; set; }

@@ -172,8 +172,8 @@
                        data-original-title="Users">
                         <i class="fas fa-dollar-sign"></i>
                     </a>
-                    <a href="#procurements" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
-                       data-original-title="Procurements">
+                    <a href="#ProductAttributes" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
+                       data-original-title="Product Attributes">
                         <i class="fab fa-connectdevelop"></i>
                     </a>
                     <a href="#billingSystem" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
@@ -259,6 +259,28 @@
                                 <ul class="nav-second-level" aria-expanded="false">
                                     <li><a asp-controller="User" asp-action="Supplier">Supplier</a></li>
                                     <li><a asp-controller="User" asp-action="Customer">Customer</a></li>
+                                    <li><a asp-controller="User" asp-action="AdminAccount">Admin Account</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="ProductAttributes" class="main-icon-menu-pane">
+                        <div class="title-box">
+                            <h6 class="menu-title">Product Attributes</h6>
+                        </div>
+                        <ul class="nav metismenu" id="main_menu_side_nav">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="dripicons-document"></i><span class="w-100">Product Attributes</span>
+                                    <span class="menu-arrow"><i class="mdi mdi-chevron-right"></i></span>
+                                </a>
+                                <ul class="nav-second-level" aria-expanded="false">
+                                    <li><a asp-controller="Brand" asp-action="Index">Brand</a></li>
+                                    <li><a asp-controller="Category" asp-action="Index">Category</a></li>
+                                    <li><a asp-controller="VatAndTax" asp-action="Index">Vat & Tax</a></li>
+                                    <li><a asp-controller="Unit" asp-action="Index">Unit</a></li>
+                                    <li><a asp-controller="Product" asp-action="Index">Add Product</a></li>
+                                    <li><a asp-controller="Product" asp-action="ProductListView">Product List</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -404,7 +426,6 @@
     <script src="~/layout/assets/pages/jquery.form-upload.init.js"></script>
 
     <!-- Rx js -->
-    <script src="~/layout/Pages/POS/js/class.js"></script>
     <script src="~/layout/js/ObjectifyForm.js"></script>
     <script src="~/layout/js/dateFormatter.js"></script>
     <script src="~/layout/js/convert.js"></script>

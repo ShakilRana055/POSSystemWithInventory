@@ -1,0 +1,246 @@
+﻿@model POSSystemWithInventory.Models.CategoryVM
+@{
+    ViewData["Title"] = "Category";
+    Layout = "~/Views/Shared/_POSLayout.cshtml";
+}
+
+<style>
+    .odd {
+        background-color: #b3ffff;
+    }
+
+    .even {
+        background-color: #b3b3ff;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-6">
+        <form id="categoryCreateForm" enctype="multipart/form-data">
+            <div class="card">
+                <div id="headingOne" class="card-header bg-blue1">
+                    <button type="button" data-toggle="collapse" data-target="#Collapse" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
+                        <h5 class="m-0 p-0" style="color: #fff;">Add Category</h5>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="Collapse" class="collapse show">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label asp-for="Name" class="control-label"></label>
+                                    <input asp-for="Name" class="form-control" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Code" class="control-label"></label>
+                                    <input asp-for="Code" class="form-control" />
+                                    <span asp-validation-for="Code" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Description" class="control-label"></label>
+                                    <textarea asp-for="Description" class="form-control" cols="3"></textarea>
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="categoryResetBtn">Reset</button>
+                        <button type="button" id="categoryCreateBtn" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div id="headingTwo" class="card-header bg-blue1">
+                <button type="button" data-toggle="collapse" data-target="#Collapse" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
+                    <h5 class="m-0 p-0" style="color: #fff;">Category List</h5>
+                </button>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-hover table-bordered" id="categoryList">
+                    <thead style="background-color: #ffd9b3;">
+                        <tr>
+                            <th>Name</th>
+                            <th>Code</th>
+                            <th>Description</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        (function () {
+            let ajaxOperation = new AjaxOperation();
+            let modalOperation = new ModalOperation();
+
+            let selector = {
+                name: $("#Name"),
+                code: $("#Code"),
+                description: $("#Description"),
+                categoryCreateBtn: $("#categoryCreateBtn"),
+                categoryCreateForm: $("#categoryCreateForm"),
+                brandList: $("#categoryList"),
+                categoryResetBtn: $("#categoryResetBtn"),
+                tableInformation: '',
+                globalId: '',
+            };
+            let validator = selector.categoryCreateForm.validate({
+                // Specify validation rules
+                rules: {
+                    Name: {
+                        required: true,
+                    },
+                },
+                // Specify validation error messages
+                messages: {
+                    Name: "Name Field is required",
+                },
+                // Make sure the form is submitted to the destination defined
+                // in the "action" attribute of the form when valid
+                submitHandler: function (form) {
+
+                }
+            });
+
+            function GenerateCategoryList() {
+                var brandList = selector.brandList.dataTable({
+                    "processing": true,
+                    "serverSide": true,
+                    "filter": true,
+                    "pageLength": 10,
+                    "autoWidth": false,
+                    "lengthMenu": [[10, 50, 100, 150, 200, 500], [10, 50, 100, 150, 200, 500]],
+                    "order": [[0, "desc"]],
+                    "ajax": {
+                        "url": "/Category/CategoryList/",
+                        "type": "POST",
+                        "data": function (data) {
+
+                        },
+                        "complete": function (json) {
+
+                        }
+                    },
+                    "columnDefs": [
+                        { "className": "custome", "targets": [0, 1, 2, 3] },
+                    ],
+                    "columns": [
+                        { "data": "name", "name": "name", "autowidth": true, "orderable": true },
+                        { "data": "code", "name": "code", "autowidth": true, "orderable": true },
+                        { "data": "description", "name": "description", "autowidth": true, "orderable": true },
+                        {
+                            "render": function (data, type, full, meta) {
+                                return `
+                                <div class="btn-group">
+                                    <i class="fa fa-ellipsis-h" title = 'Actions' style = 'cursor:pointer;' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                                  <div class="dropdown-menu" >
+                                    <button style="font-size: inherit;" class="dropdown-item btn-rx editCategoryInformation" name = "${full.name}" code = "${full.code}" description = "${full.description}" categoryId = "${full.id}" ><i class="fa fa-check-circle" aria-hidden="true"></i>Edit</button >
+                                    <button style="font-size: inherit;" class="dropdown-item btn-rx deleteCategoryInformation" categoryId = "${full.id}" > <i class="fa fa-times" aria-hidden="true"></i>Delete</button >
+                                  </div>
+                                </div>`;
+                            }
+                        },
+                    ]
+                });
+                selector.tableInformation = brandList;
+            }
+
+            function ShowEditInformation(name, code, description){
+                selector.name.val(name);
+                selector.code.val(code);
+                selector.description.val(description);
+            }
+
+            selector.categoryCreateBtn.click(function () {
+                if($(this).text() === "Save"){
+                    if (selector.categoryCreateForm.valid()) {
+                        let formData = new FormData(selector.categoryCreateForm[0]);
+                        let data = ajaxOperation.SaveAjax("/Category/Index", formData);
+                        if (data === true) {
+                            selector.tableInformation.fnFilter();
+                            selector.categoryCreateForm[0].reset();
+                            toastr.success('Successfully Saved!', 'success');
+                        }
+                        else {
+                            toastr.error('Something went wrong!', 'error');
+                        }
+                    }
+                    else {
+                        toastr.error('Please fill up the form with valid information.', 'Validation Failed!');
+                    }
+                }
+                else{
+                    let formData = new FormData(selector.categoryCreateForm[0]);
+                    formData.append("Id", selector.globalId);
+                    let data = ajaxOperation.SaveAjax("/Category/CategoryUpdate", formData);
+                    if (data === true) {
+                        selector.tableInformation.fnFilter();
+                        selector.categoryCreateForm[0].reset();
+                        toastr.success('Successfully Updated!', 'success');
+                        $(this).text("Save");
+                    }
+                    else {
+                        toastr.error('Something went wrong!', 'error');
+                    }
+                }
+            });
+
+            window.onload = function () {
+                GenerateCategoryList();
+            }
+
+            selector.categoryResetBtn.click(function () {
+                selector.categoryCreateForm[0].reset();
+            });
+
+            $(document).on("click", ".editCategoryInformation", function () {
+                selector.globalId = $(this).attr("categoryId");
+                let name = $(this).attr("name");
+                let code = $(this).attr("code");
+                let description = $(this).attr("description");
+                ShowEditInformation(name, code, description);
+                selector.categoryCreateBtn.text("Update");
+            });
+
+            $(document).on("click", ".deleteCategoryInformation", function () {
+                let supplierId = $(this).attr("categoryId");
+                Swal.fire({
+                    title: 'Are You Sure?',
+                    text: "",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes',
+                    showConfirmButton: true,
+                    allowEscapeKey: false,
+                    allowOutsideClick: false,
+
+                }).then((result) => {
+                    if (result.value) {
+                        let hasDone = ajaxOperation.DeleteAjaxById("/Category/DeleteCategory", supplierId);
+                        if (hasDone === true) {
+                            toastr.success('Successfully Deleted!', 'Success');
+                            selector.tableInformation.fnFilter();
+                        }
+                        else {
+                            toastr.error('Something went wrong', 'Error');
+                        }
+                    }
+                });
+            });
+        })();
+    </script>
+}
