@@ -5,3 +5,93 @@
 }
 
 
+<div class="row">
+    <div class="col-md-12">
+        <form id="purchaseCreateForm" enctype="multipart/form-data">
+            <div class="card">
+                <div id="headingOne" class="card-header bg-blue1">
+                    <button type="button" data-toggle="collapse" data-target="#Collapse" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
+                        <h5 class="m-0 p-0" style="color: #fff;">Purchase Product</h5>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="Collapse" class="collapse show">
+                        <h3 style="text-align:center;">Invoice No.# <span id="invoiceNumber"></span></h3>
+                        <h5 style="text-align:center;">Date: @DateTime.Now.ToString("dd MMM yyyy")</h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="SupplierId" class="control-label">Supplier Name</label>
+                                    <select asp-for="SupplierId" asp-items="@Model.SupplierItem" class="form-control select2">
+                                    </select>
+                                    <span asp-validation-for="SupplierId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="PurchaseProductDetail.ProductId" class="control-label">Product Name</label>
+                                    <select asp-for="PurchaseProductDetail.ProductId" asp-items="@Model.ProductItem" class="form-control select2">
+                                    </select>
+                                    <span asp-validation-for="PurchaseProductDetail.ProductId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group" style="margin-top: 22px;">
+                                    <button type="button" id="purchaseAddBtn" class="btn btn-success btn-sm">Add</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr style="background-color:coral;">
+                                        <th>Product Name</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                        <th>Vat&Tax</th>
+                                        <th>Sell Price</th>
+                                        <th>Total Price</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="purchaseProductTBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="purchaseResetBtn">Reset</button>
+                    <button type="button" id="purchaseCreateBtn" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts{ 
+<script>
+    (function () {
+        let ajaxOperation = new AjaxOperation();
+        let selector = {
+            invoiceNumber: $("#invoiceNumber"),
+        }
+
+        class OnloadProcess {
+            constructor() { }
+            GetInvoiceNumber() {
+                let invoiceNumber = ajaxOperation.GetAjax("/Inventory/InvoiceNumber");
+                selector.invoiceNumber.text(invoiceNumber);
+            }
+        }
+        
+        
+
+        window.onload = function () {
+            let onloadProcess = new OnloadProcess();
+            onloadProcess.GetInvoiceNumber();
+        }
+    })();
+</script>
+}

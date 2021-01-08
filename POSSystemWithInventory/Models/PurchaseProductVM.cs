@@ -23,6 +23,7 @@ namespace POSSystemWithInventory.Models
         [Column(TypeName = "decimal(16,2)")]
         public decimal TotalAmount { get; set; }
         public bool InvoiceStatus { get; set; }
+        public PurchaseProductDetailVM PurchaseProductDetail { get; set; }
         public List<PurchaseProductDetailVM> PurchaseProductDetails { get; set; }
     }
 }
