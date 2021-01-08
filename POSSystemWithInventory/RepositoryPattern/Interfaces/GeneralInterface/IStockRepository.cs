@@ -8,5 +8,6 @@ namespace POSSystemWithInventory.RepositoryPattern.Interfaces.GeneralInterface
 {
     public interface IStockRepository:IBaseRepository<Stock>
     {
+        public Stock GetLastOrDefault();
     }
 }

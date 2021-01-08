@@ -165,16 +165,20 @@
         <div class="left-sidenav">
             <div class="main-icon-menu" id="customScroll">
                 <nav class="nav">
-                    <a href="#menuDashboard" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title="" data-original-title="Dashboard">
-                        <i class="fas fa-user-tie"></i>
+                    <a href="#menuDashboard" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
+                       data-original-title="Dashboard">
+                        <i class="mdi mdi-view-dashboard"></i>
                     </a>
-                    <a href="#menuUsers" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
-                       data-original-title="Users">
-                        <i class="fas fa-dollar-sign"></i>
+                    <a href="#menuUsers" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title="" data-original-title="Users">
+                        <i class="fas fa-user-tie"></i>
                     </a>
                     <a href="#ProductAttributes" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
                        data-original-title="Product Attributes">
                         <i class="fab fa-connectdevelop"></i>
+                    </a>
+                    <a href="#inventoryManagement" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
+                       data-original-title="Inventory">
+                        <i class="fas fa-warehouse"></i>
                     </a>
                     <a href="#billingSystem" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
                        data-original-title="Billing System">
@@ -183,10 +187,6 @@
                     <a href="#productionManagement" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
                        data-original-title="Production">
                         <i class="fas fa-industry"></i>
-                    </a>
-                    <a href="#inventoryManagement" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
-                       data-original-title="Inventory">
-                        <i class="fas fa-warehouse"></i>
                     </a>
                     <a href="#salesMarketing" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
                        data-original-title="Sales & Marketing">
@@ -214,10 +214,6 @@
                         <i class="fab fa-searchengin"></i>
                     </a>
 
-                    <a href="#reportDashboard" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
-                       data-original-title="Report Dashboard">
-                        <i class="mdi mdi-view-dashboard"></i>
-                    </a>
                     <a href="#mainSettings" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
                        data-original-title="Main Settings">
                         <i class="dripicons-gear"></i>
@@ -230,6 +226,10 @@
                     <a href="#pos" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
                        data-original-title="POS">
                         <i class="fas fa-calculator"></i>
+                    </a>
+                    <a href="#somethingElse" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
+                       data-original-title="Users">
+                        <i class="fas fa-dollar-sign"></i>
                     </a>
                 </nav><!--end nav-->
             </div><!--end main-icon-menu-->
@@ -281,6 +281,23 @@
                                     <li><a asp-controller="Unit" asp-action="Index">Unit</a></li>
                                     <li><a asp-controller="Product" asp-action="Index">Add Product</a></li>
                                     <li><a asp-controller="Product" asp-action="ProductListView">Product List</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="inventoryManagement" class="main-icon-menu-pane">
+                        <div class="title-box">
+                            <h6 class="menu-title">Inventory Management</h6>
+                        </div>
+                        <ul class="nav metismenu" id="main_menu_side_nav">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="dripicons-document"></i><span class="w-100">Inventory</span>
+                                    <span class="menu-arrow"><i class="mdi mdi-chevron-right"></i></span>
+                                </a>
+                                <ul class="nav-second-level" aria-expanded="false">
+                                    <li><a asp-controller="Inventory" asp-action="Index">Purchase</a></li>
+                                    <li><a asp-controller="Inventory" asp-action="PurchaseListView">Purchase List</a></li>
                                 </ul>
                             </li>
                         </ul>

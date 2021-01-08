@@ -16,5 +16,11 @@ namespace POSSystemWithInventory.RepositoryPattern.Repositories.GeneralRepositor
         {
             context = appDb;
         }
+
+        public Stock GetLastOrDefault()
+        {
+            var result = context.Stock.OrderByDescending( x => x.Id).Take(1).FirstOrDefault();
+            return result;
+        }
     }
 }

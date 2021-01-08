@@ -73,7 +73,8 @@ namespace POSSystemWithInventory.Controllers
                 throw;
             }
         }
-        public IActionResult ProductUpdate(ProductVM productVM)
+        
+        public IActionResult ProductEditViewUpdate(ProductVM productVM)
         {
             try
             {
@@ -99,10 +100,10 @@ namespace POSSystemWithInventory.Controllers
                         products.PhotoUrl = image.GetImagePathForDb(path);
                     }
                     context.Save();
-                    return Json(true);
+                    return RedirectToAction("ProductListView");
                 }
                 else
-                    return Json(false);
+                    return View(productVM);
             }
             catch (Exception ex)
             {
@@ -193,8 +194,51 @@ namespace POSSystemWithInventory.Controllers
 
             return View(productVM);
         }
-        #endregion
+        public IActionResult ProductEditView(int search)
+        {
+            try
+            {
+                var products = context.Product.GetAllWithRelatedData(search);
 
+                var brand = context.Brand.GetAll().ToList();
+                var category = context.Category.GetAll().ToList();
+                var unit = context.Unit.GetAll().ToList();
+
+                if (products != null)
+                {
+                    ProductVM productVM = new ProductVM()
+                    {
+                        Id = search,
+                        Name = products.Name,
+                        WarningQuantity = products.WarningQuantity,
+                        PhotoUrl = products.PhotoUrl,
+                        Description = products.Description,
+                        BrandId = products.BrandId,
+                        CategoryId = products.CategoryId,
+                        UnitId = products.UnitId,
+                        BrandItem = POSHelper.Brand(brand),
+                        CategoryItem = POSHelper.Category(category),
+                        UnitItem = POSHelper.Unit(unit),
+                    };
+                    return View(productVM);
+                }
+                else
+                {
+                    ProductVM productVM = new ProductVM()
+                    {
+                        BrandItem = POSHelper.Brand(brand),
+                        CategoryItem = POSHelper.Category(category),
+                        UnitItem = POSHelper.Unit(unit),
+                    };
+                    return View(productVM);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        #endregion
         public IActionResult ProductInformation(int search)
         {
             try
@@ -208,9 +252,9 @@ namespace POSSystemWithInventory.Controllers
                         Description = productInformation.Description,
                         WarningQuantity = productInformation.WarningQuantity,
                         PhotoUrl = productInformation.PhotoUrl,
-                        BrandName = productInformation.Brand.Name != null ? productInformation.Brand.Name : "" ,
-                        CategoryName = productInformation.Category.Name != null ? productInformation.Category.Name : "" ,
-                        UnitName = productInformation.Unit.Name != null ? productInformation.Unit.Name : "" ,
+                        BrandName = productInformation.Brand != null ? productInformation.Brand.Name : "" ,
+                        CategoryName = productInformation.Category != null ? productInformation.Category.Name : "" ,
+                        UnitName = productInformation.Unit != null ? productInformation.Unit.Name : "" ,
                     };
                     return PartialView("_ProductInformation", productVM);
                 }

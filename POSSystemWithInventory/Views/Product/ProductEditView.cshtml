@@ -1,0 +1,111 @@
+﻿@model POSSystemWithInventory.Models.ProductVM
+@{
+    ViewData["Title"] = "ProductEditView";
+    Layout = "~/Views/Shared/_POSLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <form id="productUpdateForm" action="/Product/ProductEditViewUpdate" enctype="multipart/form-data">
+            <div class="card">
+                <div id="headingOne" class="card-header bg-blue1">
+                    <button type="button" data-toggle="collapse" data-target="#Collapse" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
+                        <h5 class="m-0 p-0" style="color: #fff;">Update Product</h5>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="Collapse" class="collapse show">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group" style="display:none;">
+                                    <label asp-for="Id" class="control-label"></label>
+                                    <input asp-for="Id" class="form-control" />
+                                    <span asp-validation-for="Id" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Name" class="control-label"></label>
+                                    <input asp-for="Name" class="form-control" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Description" class="control-label"></label>
+                                    <textarea asp-for="Description" class="form-control" cols="3"></textarea>
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="Photo" class="control-label"></label>
+                                    <input asp-for="Photo" class="form-control" style="border:none;" />
+                                    <span asp-validation-for="Photo" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="WarningQuantity" class="control-label">Warning Quantity</label>
+                                    <input asp-for="WarningQuantity" class="form-control" />
+                                    <span asp-validation-for="WarningQuantity" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="BrandId" class="control-label">Brand</label>
+                                    <select class="form-control select2" asp-for="BrandId" asp-items="@Model.BrandItem">
+                                    </select>
+                                    <span asp-validation-for="BrandId" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="CategoryId" class="control-label">Category</label>
+                                    <select class="form-control select2" asp-for="CategoryId" asp-items="@Model.CategoryItem">
+                                    </select>
+                                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="UnitId" class="control-label">Unit</label>
+                                    <select class="form-control select2" asp-for="UnitId" asp-items="@Model.UnitItem">
+                                    </select>
+                                    <span asp-validation-for="UnitId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" id="productUpdateBtn" class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@*@section Scripts{ 
+    <script>
+        (function () {
+            let ajaxOperation = new AjaxOperation();
+
+            let selector = {
+                name: $("#Name"),
+                description: $("#Description"),
+                photo: $("#Photo"),
+                warningQuantity: $("#WarningQuantity"),
+                categoryId: $("#CategoryId"),
+                brandId: $("#BrandId"),
+                unitId: $("#UnitId"),
+                productUpdateBtn: $("#productUpdateBtn"),
+                productUpdateForm: $("#productUpdateForm"),
+            };
+
+            selector.productUpdateBtn.click(function () {
+                let formData = new FormData(selector.productUpdateForm[0]);
+                let photo = selector.photo.get(0);
+                formData.append("Photo", photo.files);
+
+                let data = ajaxOperation.SaveAjax("/Product/ProductEditView", formData);
+                if (data === true) {
+                    selector.productCreateForm[0].reset();
+                    toastr.success('Successfully Saved!', 'success');
+                }
+                else {
+                    toastr.error('Something went wrong!', 'error');
+                }
+            });
+        })();
+    </script>
+}*@

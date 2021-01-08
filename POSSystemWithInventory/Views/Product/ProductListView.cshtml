@@ -24,7 +24,7 @@
                     </button>
                 </div>
                 <div class="card-body">
-                    <div id="advanceSearchProduct" class="collapse show">
+                    <div id="advanceSearchProduct" class="collapse hide">
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -61,7 +61,7 @@
     <div class="col-md-12">
         <div class="card">
             <div id="headingOne" class="card-header bg-blue1">
-                <button type="button" data-toggle="collapse" data-target="#advanceSearchProductList" aria-expanded="false" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
+                <button type="button" data-toggle="collapse" data-target="#advanceSearchProductList" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
                     <h5 class="m-0 p-0" style="color: #fff;">Product List</h5>
                 </button>
             </div>
@@ -86,13 +86,17 @@
             </div>
         </div>
     </div>
+</div>
 
     @section Scripts{
         <script>
         (function () {
+            let ajaxOperation = new AjaxOperation();
+            let modalOperation = new ModalOperation();
 
             let selector = {
                 productList: $("#productList"),
+                tableInformation: '',
             };
             
             function GenerateBrandList() {
@@ -147,7 +151,7 @@
                                     <i class="fa fa-ellipsis-h" title = 'Actions' style = 'cursor:pointer;' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
                                   <div class="dropdown-menu" >
                                     <button style="font-size: inherit;" class="dropdown-item btn-rx viewProductInformation"  productId = "${full.id}" ><i class="fa fa-info-circle" aria-hidden="true"></i>View</button >
-                                    <button style="font-size: inherit;" class="dropdown-item btn-rx editProductInformation"  productId = "${full.id}" ><i class="fa fa-check-circle" aria-hidden="true"></i>Edit</button >
+                                    <a style="font-size: inherit;" class="dropdown-item btn-rx" href = "/Product/ProductEditView?search=${full.id}"><i class="fa fa-check-circle" aria-hidden="true"></i>Edit</a >
                                     <button style="font-size: inherit;" class="dropdown-item btn-rx deleteProductInformation" productId = "${full.id}" > <i class="fa fa-times" aria-hidden="true"></i>Delete</button >
                                   </div>
                                 </div>`;
@@ -161,6 +165,44 @@
             window.onload = function () {
                 GenerateBrandList();
             }
+
+            $(document).on("click", ".deleteProductInformation", function () {
+                let productId = $(this).attr("productId");
+                Swal.fire({
+                    title: 'Are You Sure?',
+                    text: "",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes',
+                    showConfirmButton: true,
+                    allowEscapeKey: false,
+                    allowOutsideClick: false,
+
+                }).then((result) => {
+                    if (result.value) {
+                        let hasDone = ajaxOperation.DeleteAjaxById("/Product/DeleteProduct", productId);
+                        if (hasDone === true) {
+                            toastr.success('Successfully Deleted!', 'Success');
+                            selector.tableInformation.fnFilter();
+                        }
+                        else {
+                            toastr.error('Something went wrong', 'Error');
+                        }
+                    }
+                });
+            });
+
+
+            $(document).on("click", ".viewProductInformation", function () {
+                let productId = $(this).attr("productId");
+                let htmlData = ajaxOperation.GetAjaxHtmlByValue("/Product/ProductInformation", productId);
+
+                $("#modalHeading").text("Product Information");
+                modalOperation.ModalStatic("#informationModal");
+                modalOperation.ModalOpenWithHtml("#informationModal", "#informationModalDiv", htmlData);
+            });
 
         })();
         </script>
