@@ -39,14 +39,42 @@ namespace POSSystemWithInventory.Controllers
         {
             try
             {
-                Stock stock = new Stock() 
-                { 
+                #region Pushing into Purchase Product 
+                PurchaseProduct purchase = new PurchaseProduct()
+                {
                     InvoiceNumber = purchaseProduct.InvoiceNumber,
                     SupplierId = purchaseProduct.SupplierId,
-                    TotalAmount = purchaseProduct.TotalAmount,
-                    InvoiceStatus = purchaseProduct.InvoiceStatus,
-
+                    SubTotal = purchaseProduct.SubTotal,
+                    GrandTotal = purchaseProduct.GrandTotal,
+                    Discount = purchaseProduct.Discount,
+                    Dues = purchaseProduct.Dues,
+                    PaidAmount = purchaseProduct.PaidAmount,
+                    PaymentMode = purchaseProduct.PaymentMode,
                 };
+                context.PurchaseProduct.Add(purchase);
+                context.Save();
+                #endregion
+
+                #region Pushing into Purchase Product Detail
+                foreach (var item in purchaseProduct.PurchaseProductDetails)
+                {
+                    PurchaseProductDetail purchaseProductDetail = new PurchaseProductDetail()
+                    {
+                        PurchaseProductId = purchase.Id,
+                        InvoiceNumber = item.InvoiceNumber,
+                        ProductId = item.ProductId,
+                        Quantity = item.Quantity,
+                        UnitPrice = item.UnitPrice,
+                        VatAndTaxId = item.VatAndTaxId,
+                        BasePrice = item.BasePrice,
+                        SellPrice = item.SellPrice,
+                    };
+                    context.PurchaseProductDetail.Add(purchaseProductDetail);
+                    context.Save();
+                    UpdateInventory(item.ProductId, item.Quantity);
+                }
+
+                #endregion
 
                 return Json(true);
             }
@@ -63,7 +91,17 @@ namespace POSSystemWithInventory.Controllers
         #endregion
 
         #region Actions & Helpers 
-
+        private void UpdateInventory(int? productId, decimal quantity)
+        {
+            var inventory = context.Inventory.Find(x => x.ProductId == productId).FirstOrDefault();
+            if(inventory != null)
+            {
+                inventory.AvailableQuantity = inventory.AvailableQuantity + quantity;
+                inventory.UpdatedDate = DateTime.Now.ToShortDateString();
+                context.Save();
+            }
+            return;
+        }
         private string GetInvoiceNumber()
         {
             var stockLastEntry = context.Stock.GetLastOrDefault();
@@ -75,7 +113,6 @@ namespace POSSystemWithInventory.Controllers
             string invoiceNumber = GetInvoiceNumber();
             return Json(invoiceNumber);
         }
-
         #endregion
     }
 }

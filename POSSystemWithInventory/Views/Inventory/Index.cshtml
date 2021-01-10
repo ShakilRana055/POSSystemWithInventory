@@ -38,6 +38,9 @@
     .rightAlign {
         text-align: right;
     }
+    .redColor{
+        border-color:red;
+    }
 
 </style>
 
@@ -54,7 +57,7 @@
                     <div id="Collapse" class="collapse show">
                         <h3 style="text-align:center;">Invoice No.# <span id="invoiceNumber"></span></h3>
                         <h5 style="text-align:center;">Date: @DateTime.Now.ToString("dd MMM yyyy")</h5>
-                        <select style="display:none;" asp-for="PurchaseProductDetail.VatId" asp-items="@Model.VatItem">
+                        <select style="display:none;" asp-for="PurchaseProductDetail.VatAndTaxId" asp-items="@Model.VatItem">
 
                         </select>
                         <div class="row">
@@ -138,7 +141,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary pull-right" id="purchaseResetBtn">Reset</button>
-                    <button type="button" id="purchaseCreateBtn pull-right" class="btn btn-primary">Save</button>
+                    <button type="button" id="purchaseCreateBtn" class="btn btn-primary">Save</button>
                 </div>
             </div>
         </form>
@@ -156,7 +159,7 @@
         let selector = {
             invoiceNumber: $("#invoiceNumber"),
             purchaseAddBtn: $("#purchaseAddBtn"),
-            vatItems: $("#PurchaseProductDetail_VatId"),
+            vatItems: $("#PurchaseProductDetail_VatAndTaxId"),
             productId: $("#PurchaseProductDetail_ProductId"),
             purchaseProductTBody: $("#purchaseProductTBody"),
             subTotal: $("#subTotal"),
@@ -165,6 +168,9 @@
             paidAmount: $("#paidAmount"),
             paymentMode: $("#paymentMode"),
             dues: $("#dues"),
+            purchaseCreateBtn: $("#purchaseCreateBtn"),
+            purchaseResetBtn: $("#purchaseResetBtn"),
+            supplierId: $("#SupplierId"),
 
             productIdInfo: ".productIdInfo",
             quantityInfo: ".quantityInfo",
@@ -187,15 +193,15 @@
             }
         }
 
-        class PurchaseProductDetails {
-            constructor(InvoiceNumber, ProductId, VatId, Quantity, PurchasePrice, SellPrice, Amount) {
+        class PurchaseProductDetail {
+            constructor(InvoiceNumber, ProductId, Quantity, UnitPrice, VatId,  BasePrice, SellPrice ) {
                 this.InvoiceNumber = InvoiceNumber;
                 this.ProductId = ProductId;
-                this.VatId = VatId;
-                this.Quantity = Quantity
-                this.PurchasePrice = PurchasePrice;
+                this.Quantity = Quantity;
+                this.UnitPrice = UnitPrice;
+                this.VatAndTaxId = VatId;
+                this.BasePrice = BasePrice;
                 this.SellPrice = SellPrice;
-                this.Amount = Amount;
             }
         }
 
@@ -228,6 +234,28 @@
                 selector.serialNumber++;
                 return data;
                
+            }
+            CreateRow(productName, productId, quantityInfo, purchasePriceInfo, vatAndTaxInfo, priceInfo, sellPriceInfo) {
+                let data = `<tr id ="rowId${selector.rowId}">
+                                <td><a class="productIdInfo" style = "cursor:pointer; text-decoration:underline;" serialNumber="${selector.serialNumber}" productId="${productId}">${productName}</a></td>
+                                <td><input type="number" class="form-control quantityInfo rightAlign" value = "${quantityInfo}" serialNumber="${selector.serialNumber}" /></td>
+                                <td><input type="number" class="form-control purchasePriceInfo rightAlign" value = "${purchasePriceInfo}" serialNumber="${selector.serialNumber}" /></td>
+                                <td>
+                                    <div class="form-group select2Class" >
+                                        <select class="form-control vatAndTaxInfo select2" value = "${vatAndTaxInfo}" serialNumber="${selector.serialNumber}">
+                                            ${selector.vatItems.html()}
+                                        </select>
+                                    </div>
+                                </td>
+                                <td><input type="number" readonly="readonly" class="form-control priceInfo rightAlign" value = "${priceInfo}" serialNumber="${selector.serialNumber}" /></td>
+                                <td><input type="number" class="form-control sellPriceInfo rightAlign"  value = "${sellPriceInfo}" serialNumber="${selector.serialNumber}" /></td>
+                                <td>
+                                    <button type = "button" class="btn btn-danger deleteInfo btn-sm" rowId="rowId${selector.rowId}" serialNumber="${selector.serialNumber}"><i class="fa fa-trash-alt"></i></button>
+                                </td>
+                            </tr>`;
+                selector.rowId++;
+                selector.serialNumber++;
+                return data;
             }
             QuickSortOneD(arrayName) {
                 arrayName.sort((a, b) => a - b);
@@ -292,20 +320,89 @@
             DeleteRow(deleteId) {
                 let htmlData = "";
                 let selfThis = this;
+                selector.selectedProduct = [];
                 $("#purchaseProductTBody tr").each(function (i, row) {
                     let iterateRow = row.id;
                     if (iterateRow != deleteId) {
                         let productName = $(this).find("td .productIdInfo").text();
                         let productId = $(this).find("td .productIdInfo").attr("productId");
-                        let quantityInfo = $(this).find("td .productIdInfo").text();
-                        let purchasePriceInfo = $(this).find("td .productIdInfo").text();
-                        let vatAndTaxInfo = $(this).find("td .productIdInfo").text();
-                        let priceInfo = $(this).find("td .productIdInfo").text();
-                        let sellPriceInfo = $(this).find("td .productIdInfo").text();
-                        //let htmlData = CreateRow(productName, productId, quantityInfo, purchasePriceInfo, vatAndTaxInfo, priceInfo, sellPriceInfo);
+                        let quantityInfo = $(this).find("td .quantityInfo").val();
+                        let purchasePriceInfo = $(this).find("td .purchasePriceInfo").val();
+                        let vatAndTaxInfo = $(this).find("td .vatAndTaxInfo").val();
+                        let priceInfo = $(this).find("td .priceInfo").val();
+                        let sellPriceInfo = $(this).find("td .sellPriceInfo").val();
+                        selector.selectedProduct.push(productId);
+                        htmlData += selfThis.CreateRow(productName, productId, quantityInfo, purchasePriceInfo, vatAndTaxInfo, priceInfo, sellPriceInfo);
                     }
                 });
                 return htmlData;
+            }
+            MultipleTask(serialNumber) {
+                let quantity = this.GetInputValue(serialNumber, selector.quantityInfo);
+                let purchasePrice = this.GetInputValue(serialNumber, selector.purchasePriceInfo);
+                let vatAndTax = this.VatAndTax(serialNumber, selector.vatAndTaxInfo);
+
+                let basePrice = this.CalculateBasePrice(Number(quantity), Number(purchasePrice), Number(vatAndTax));
+                this.SetInputValue(serialNumber, selector.priceInfo, basePrice);
+                let totalPrice = this.Summation(selector.priceInfo);
+
+                selector.subTotal.text(totalPrice);
+                selector.grandTotal.text(totalPrice);
+                selector.paidAmount.val(totalPrice);
+                selector.dues.text(0.0);
+            }
+            GiveRedColor(className) {
+                let isOk = true;
+                $(className).each(function () {
+                    if ($(this).val() === "") {
+                        $(this).addClass("redColor");
+                        isOk = false;
+                    }
+                    else {
+                        $(this).removeClass("redColor");
+                    }
+                });
+                return isOk;
+            }
+            Validation() {
+                let quantity = this.GiveRedColor(selector.quantityInfo);
+                let unitPrice = this.GiveRedColor(selector.purchasePriceInfo);
+                let sellPrice = this.GiveRedColor(selector.sellPriceInfo);
+                if (quantity && unitPrice && sellPrice)
+                    return true;
+                else
+                    return false;
+            }
+            IterateOverTable(tableName) {
+                let jsonData = [];
+                $(tableName).each(function (i, row) {
+                    let productId = $(this).find("td .productIdInfo").attr("productId");
+                    let quantity = $(this).find("td .quantityInfo").val();
+                    let unitPrice = $(this).find("td .purchasePriceInfo").val();
+                    let vatAndTaxId = $(this).find("td .vatAndTaxInfo").val();
+                    let basePrice = $(this).find("td .priceInfo").val();
+                    let sellPrice = $(this).find("td .sellPriceInfo").val();
+                    let invoiceNumber = selector.invoiceNumber.text();
+
+                    let obj = new PurchaseProductDetail(invoiceNumber, productId, quantity, unitPrice, vatAndTaxId, basePrice, sellPrice);
+                    jsonData.push(obj);
+                });
+                return jsonData;
+            }
+            MakeJsonData() {
+                let details = this.IterateOverTable("#purchaseProductTBody tr");
+                let jsonData = {
+                    invoiceNumber: selector.invoiceNumber.text(),
+                    supplierId: selector.supplierId.val(),
+                    grandTotal: Number(selector.grandTotal.text()),
+                    subTotal: Number(selector.subTotal.text()),
+                    discount: selector.discountAmount.val(),
+                    paidAmount: selector.paidAmount.val(),
+                    dues: Number(selector.dues.text()),
+                    paymentMode: selector.paymentMode.val(),
+                    purchaseProductDetail: details,
+                };
+                return jsonData;
             }
         }
 
@@ -345,52 +442,18 @@
         });
 
         $(document).on("keyup", selector.quantityInfo, function () {
-            console.log("here");
             let serialNumber = $(this).attr("serialNumber");
-            let quantity = process.GetInputValue(serialNumber, selector.quantityInfo);
-            let purchasePrice = process.GetInputValue(serialNumber, selector.purchasePriceInfo);
-            let vatAndTax = process.VatAndTax(serialNumber, selector.vatAndTaxInfo);
-
-            let basePrice = process.CalculateBasePrice(Number(quantity), Number(purchasePrice), Number(vatAndTax));
-            process.SetInputValue(serialNumber, selector.priceInfo, basePrice);
-            let totalPrice = process.Summation(selector.priceInfo);
-
-            selector.subTotal.text(totalPrice);
-            selector.grandTotal.text(totalPrice);
-            selector.paidAmount.val(totalPrice);
-            selector.dues.text(0.0);
+            process.MultipleTask(serialNumber);
         });
 
         $(document).on("keyup", selector.purchasePriceInfo, function () {
             let serialNumber = $(this).attr("serialNumber");
-            let quantity = process.GetInputValue(serialNumber, selector.quantityInfo);
-            let purchasePrice = process.GetInputValue(serialNumber, selector.purchasePriceInfo);
-            let vatAndTax = process.VatAndTax(serialNumber, selector.vatAndTaxInfo);
-
-            let basePrice = process.CalculateBasePrice(Number(quantity), Number(purchasePrice), Number(vatAndTax));
-            process.SetInputValue(serialNumber, selector.priceInfo, basePrice);
-            let totalPrice = process.Summation(selector.priceInfo);
-
-            selector.subTotal.text(totalPrice);
-            selector.grandTotal.text(totalPrice);
-            selector.paidAmount.val(totalPrice);
-            selector.dues.text(0.0);
+            process.MultipleTask(serialNumber);
         });
 
         $(document).on("change", selector.vatAndTaxInfo, function () {
             let serialNumber = $(this).attr("serialNumber");
-            let quantity = process.GetInputValue(serialNumber, selector.quantityInfo);
-            let purchasePrice = process.GetInputValue(serialNumber, selector.purchasePriceInfo);
-            let vatAndTax = process.VatAndTax(serialNumber, selector.vatAndTaxInfo);
-
-            let basePrice = process.CalculateBasePrice(Number(quantity), Number(purchasePrice), Number(vatAndTax));
-            process.SetInputValue(serialNumber, selector.priceInfo, basePrice);
-            let totalPrice = process.Summation(selector.priceInfo);
-
-            selector.subTotal.text(totalPrice);
-            selector.grandTotal.text(totalPrice);
-            selector.paidAmount.val(totalPrice);
-            selector.dues.text(0.0);
+            process.MultipleTask(serialNumber);
         });
 
         selector.discountAmount.keyup(function () {
@@ -419,8 +482,29 @@
             let rowId = $(this).attr("rowId");
             let htmlData = process.DeleteRow(rowId);
             selector.purchaseProductTBody.html(htmlData);
+
+            let totalPrice = process.Summation(selector.priceInfo);
+            selector.subTotal.text(totalPrice);
+            selector.grandTotal.text(totalPrice);
+            selector.paidAmount.val(totalPrice);
+            selector.dues.text(0.0);
         });
 
+        selector.purchaseCreateBtn.click(function () {
+            if (process.Validation()) {
+                let jsonData = process.MakeJsonData();
+                let response = ajaxOperation.SaveAjax("/Inventory/Index", jsonData);
+                if (response) {
+                    toastr.success("Successfully Saved!", "Success!");
+                }
+            }
+            else {
+                toastr.error("Fill up the form", "Error!");
+            }
+        });
+        selector.purchaseResetBtn.click(function () {
+            alert("clicked");
+        })
     })();
 </script>
 }

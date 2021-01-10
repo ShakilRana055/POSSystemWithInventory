@@ -42,6 +42,7 @@ namespace POSSystemWithInventory.Controllers
         {
             try
             {
+                #region Product
                 Product product = new Product()
                 {
                     Name = productVM.Name,
@@ -65,6 +66,19 @@ namespace POSSystemWithInventory.Controllers
                 }
                 context.Product.Add(product);
                 context.Save();
+                #endregion
+
+                
+                #region Inventory
+                Inventory inventory = new Inventory()
+                {
+                    ProductId = product.Id,
+                    AvailableQuantity = 0,
+                };
+                context.Inventory.Add(inventory);
+                context.Save();
+                #endregion
+
                 return Json(true);
             }
             catch (Exception ex)

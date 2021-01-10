@@ -15,8 +15,11 @@ namespace POSSystemWithInventory.RepositoryPattern.Interfaces.IUnitOfWork
         public ICompanyInformationRepository CompanyInformation { get; }
         public ICustomerRepository Customer { get; }
         public IInvoiceRepository Invoice { get; }
+        public IInventoryRepository Inventory { get; }
         public IInvoiceDetailsRepository InvoiceDetails { get; }
         public IProductRepository Product { get; }
+        public IPurchaseProductRepository PurchaseProduct { get; }
+        public IPurchaseProductDetailRepository PurchaseProductDetail { get; }
         public IStockRepository Stock { get; }
         public IStockDetailsRepository StockDetails { get; }
         public ISupplierRepository Supplier { get; }
