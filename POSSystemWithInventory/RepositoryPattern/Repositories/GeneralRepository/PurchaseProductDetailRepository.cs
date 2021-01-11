@@ -27,5 +27,13 @@ namespace POSSystemWithInventory.RepositoryPattern.Repositories.GeneralRepositor
                             .ToList();
             return result;
         }
+        public IEnumerable<PurchaseProductDetail> GetAllWithProduct()
+        {
+            var result = context.PurchaseProductDetail
+                        .Include(x => x.Product)
+                        .OrderByDescending(x => x.Id)
+                        .ToList();
+            return result.Distinct().ToList();
+        }
     }
 }

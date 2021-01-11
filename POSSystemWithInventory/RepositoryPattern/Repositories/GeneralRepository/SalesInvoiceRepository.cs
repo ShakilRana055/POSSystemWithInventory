@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using POSSystemWithInventory.Data;
+﻿using POSSystemWithInventory.Data;
 using POSSystemWithInventory.EntityModel;
 using POSSystemWithInventory.RepositoryPattern.Interfaces.GeneralInterface;
 using System;
@@ -9,17 +8,17 @@ using System.Threading.Tasks;
 
 namespace POSSystemWithInventory.RepositoryPattern.Repositories.GeneralRepository
 {
-    public class InventoryRepository:BaseRepository<Inventory>, IInventoryRepository
+    public class SalesInvoiceRepository: BaseRepository<SalesInvoice>, ISalesInvoiceRepository
     {
         private readonly AppDbContext context;
 
-        public InventoryRepository( AppDbContext appDbContext):base(appDbContext)
+        public SalesInvoiceRepository(AppDbContext appDbContext): base(appDbContext)
         {
             context = appDbContext;
         }
-        public IEnumerable<Inventory> GetAllWithRelatedData()
+        public SalesInvoice GetLastOrDefault()
         {
-            var result = context.Inventory.Include(x => x.Product).ToList();
+            var result = context.SalesInvoice.OrderByDescending(x => x.Id).Take(1).FirstOrDefault();
             return result;
         }
     }

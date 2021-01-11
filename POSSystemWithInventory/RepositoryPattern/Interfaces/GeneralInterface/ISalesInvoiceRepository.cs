@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace POSSystemWithInventory.RepositoryPattern.Interfaces.GeneralInterface
 {
-    public interface IInventoryRepository: IBaseRepository<Inventory>
+    public interface ISalesInvoiceRepository: IBaseRepository<SalesInvoice>
     {
-        public IEnumerable<Inventory> GetAllWithRelatedData();
+        public SalesInvoice GetLastOrDefault();
     }
 }

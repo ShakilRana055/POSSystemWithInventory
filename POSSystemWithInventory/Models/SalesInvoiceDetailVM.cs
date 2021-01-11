@@ -4,18 +4,19 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace POSSystemWithInventory.EntityModel
+namespace POSSystemWithInventory.Models
 {
-    public class Inventory:BaseClass
+    public class SalesInvoiceDetailVM
     {
         public int Id { get; set; }
+        public string InvoiceNumber { get; set; }
+        public int? SalesInvoiceId { get; set; }
         public int? ProductId { get; set; }
-        public Product Product { get; set; }
 
         [Column(TypeName = "decimal(16,2)")]
-        public decimal AvailableQuantity { get; set; }
+        public decimal Quantity { get; set; }
 
         [Column(TypeName = "decimal(16,2)")]
-        public decimal SellPrice { get; set; }
+        public decimal Price { get; set; }
     }
 }

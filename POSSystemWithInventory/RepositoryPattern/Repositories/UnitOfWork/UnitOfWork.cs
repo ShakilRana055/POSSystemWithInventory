@@ -26,6 +26,8 @@ namespace POSSystemWithInventory.RepositoryPattern.Repositories.UnitOfWork
             Inventory = new InventoryRepository(context);
             InvoiceDetails = new InvoiceDetailsRepository(context);
             Product = new ProductRepository(context);
+            SalesInvoice = new SalesInvoiceRepository(context);
+            SalesInvoiceDetail = new SalesInvoiceDetailRepository(context);
             PurchaseProduct = new PurchaseProductRepository(context);
             PurchaseProductDetail = new PurchaseProductDetailRepository(context);
             Stock = new StockRepository(context);
@@ -59,6 +61,8 @@ namespace POSSystemWithInventory.RepositoryPattern.Repositories.UnitOfWork
         public IPurchaseProductRepository PurchaseProduct { get; private set; }
         public IPurchaseProductDetailRepository PurchaseProductDetail { get; private set; }
         public IProductRepository Product { get; private set; }
+        public ISalesInvoiceRepository SalesInvoice { get; private set; }
+        public ISalesInvoiceDetailRepository SalesInvoiceDetail { get; private set; }
         public IStockRepository Stock { get; private set; }
         public IStockDetailsRepository StockDetails { get; private set; }
         public ISupplierRepository Supplier { get; private set; }

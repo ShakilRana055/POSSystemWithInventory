@@ -72,7 +72,7 @@ namespace POSSystemWithInventory.Controllers
                     };
                     context.PurchaseProductDetail.Add(purchaseProductDetail);
                     context.Save();
-                    UpdateInventory(item.ProductId, item.Quantity);
+                    UpdateInventory(item.ProductId, item.Quantity, item.SellPrice);
                 }
 
                 #endregion
@@ -100,13 +100,14 @@ namespace POSSystemWithInventory.Controllers
         #endregion
 
         #region Actions & Helpers 
-        private void UpdateInventory(int? productId, decimal quantity)
+        private void UpdateInventory(int? productId, decimal quantity, decimal sellPrice)
         {
             var inventory = context.Inventory.Find(x => x.ProductId == productId).FirstOrDefault();
             if(inventory != null)
             {
                 inventory.AvailableQuantity = inventory.AvailableQuantity + quantity;
                 inventory.UpdatedDate = DateTime.Now.ToShortDateString();
+                inventory.SellPrice = sellPrice;
                 context.Save();
             }
             return;
@@ -168,6 +169,11 @@ namespace POSSystemWithInventory.Controllers
 
             //Returning Json Data    
             return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
+        }
+        public IActionResult GetPurchaseDetailList()
+        {
+            var purchaseProductDetailList = context.PurchaseProductDetail.GetAllWithProduct();
+            return Json(purchaseProductDetailList);
         }
         #endregion
     }

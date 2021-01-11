@@ -180,10 +180,12 @@
                        data-original-title="Inventory">
                         <i class="fas fa-warehouse"></i>
                     </a>
-                    <a href="#billingSystem" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
-                       data-original-title="Billing System">
+                    <a href="#SalesManagement" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
+                       data-original-title="Sales Management">
                         <i class="fas fa-cash-register"></i>
                     </a>
+
+
                     <a href="#productionManagement" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
                        data-original-title="Production">
                         <i class="fas fa-industry"></i>
@@ -298,6 +300,23 @@
                                 <ul class="nav-second-level" aria-expanded="false">
                                     <li><a asp-controller="Inventory" asp-action="Index">Purchase</a></li>
                                     <li><a asp-controller="Inventory" asp-action="PurchaseList">Purchase List</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="SalesManagement" class="main-icon-menu-pane">
+                        <div class="title-box">
+                            <h6 class="menu-title">Sales Management</h6>
+                        </div>
+                        <ul class="nav metismenu" id="main_menu_side_nav">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="dripicons-document"></i><span class="w-100">Sale Management</span>
+                                    <span class="menu-arrow"><i class="mdi mdi-chevron-right"></i></span>
+                                </a>
+                                <ul class="nav-second-level" aria-expanded="false">
+                                    <li><a asp-controller="SalesInvoice" asp-action="Index">Add Sale</a></li>
+                                    <li><a asp-controller="SalesInvoice" asp-action="SalesInvoiceList">Sales List</a></li>
                                 </ul>
                             </li>
                         </ul>

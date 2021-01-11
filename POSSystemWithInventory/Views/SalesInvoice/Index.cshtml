@@ -1,0 +1,180 @@
+﻿@model POSSystemWithInventory.Models.SalesInvoiceVM
+@{
+    ViewData["Title"] = "Sales Invoice";
+    Layout = "~/Views/Shared/_POSLayout.cshtml";
+}
+
+<style>
+
+    /*#salesInvoiceTable th, td:nth-child(1) {
+        width: 15% !important;
+    }
+
+    #salesInvoiceTable th, td:nth-child(2) {
+        width: 14% !important;
+    }
+
+    #salesInvoiceTable th, td:nth-child(3) {
+        width: 14% !important;
+    }
+
+    #salesInvoiceTable th, td:nth-child(4) {
+        width: 17% !important;
+    }
+
+    #salesInvoiceTable th, td:nth-child(5) {
+        width: 14% !important;
+    }*/
+
+    #salesInvoiceTable tbody, tr:nth-child(2n+1) {
+        background-color: #ccffcc;
+    }
+
+    #salesInvoiceTable tbody, tr:nth-child(2n+2) {
+        background-color: #e6ccff;
+    }
+
+    .rightAlign {
+        text-align: right;
+    }
+
+    .redColor {
+        border-color: red;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <form id="salesInvoiceCreateForm" enctype="multipart/form-data">
+            <div class="card">
+                <div id="headingOne" class="card-header bg-blue1">
+                    <button type="button" data-toggle="collapse" data-target="#Collapse" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
+                        <h5 class="m-0 p-0" style="color: #fff;">Add Sales</h5>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="Collapse" class="collapse show">
+                        <h3 style="text-align:center;">Invoice No.# <span id="invoiceNumber"></span></h3>
+                        <h5 style="text-align:center;">Date: @DateTime.Now.ToString("dd MMM yyyy")</h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="CustomerId" class="control-label">Customer Name</label>
+                                    <select asp-for="CustomerId" asp-items="@Model.CustomerItem" class="form-control select2">
+                                        <option value="">-----Select-----</option>
+                                    </select>
+                                    <span asp-validation-for="CustomerId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="SalesInvoiceDetail.ProductId" class="control-label">Product Name</label>
+                                    <select asp-for="SalesInvoiceDetail.ProductId" asp-items="@Model.ProductItem" class="form-control select2">
+                                        <option value="">-----Select-----</option>
+                                    </select>
+                                    <span asp-validation-for="SalesInvoiceDetail.ProductId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group" style="margin-top: 22px;">
+                                    <button type="button" id="purchaseAddBtn" class="btn btn-success btn-sm">Add</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row table-responsive">
+                            <table class="table table-bordered table-hover" id="salesInvoiceTable">
+                                <thead>
+                                    <tr style="background-color: #9999ff; font-weight:900; color:black; text-align:center;">
+                                        <th>Name</th>
+                                        <th>Quantity</th>
+                                        <th>Unit Price</th>
+                                        <th>Price</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="salesInvoiceTBody">
+                                </tbody>
+                                <tfoot>
+                                    <tr style="background-color: #9999ff;font-weight: 900;color: black;">
+                                        <td colspan="3" align="right">Sub total</td>
+                                        <td id="subTotal" align="right"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr style="font-weight: 900;color: black;">
+                                        <td colspan="3" align="right">Discount</td>
+                                        <td id="discount">
+                                            <input type="number" style="width:90% !important; float: left;" class="form-control rightAlign" id="discountAmount" />
+                                            <span style="width: 10% !important;float: left; margin-top:7px;">%</span>
+                                        </td>
+                                        <td>
+                                            <select class="form-control" asp-for="VatAndTaxId" asp-items="@Model.VatItem"></select>
+                                        </td>
+                                    </tr>
+                                    <tr style="font-weight: 900;color: black;">
+                                        <td colspan="3" align="right">Grand total</td>
+                                        <td id="grandTotal" align="right"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr style="font-weight: 900;color: black;">
+                                        <td colspan="3" align="right">Paid Amount</td>
+                                        <td><input type="number" class="form-control rightAlign" id="paidAmount" /></td>
+                                        <td>
+                                            <select class="form-control" id="paymentMode">
+                                                <option value="Cash">Cash</option>
+                                                <option value="Card">Card</option>
+                                                <option value="Mobile Banking">Mobile Banking</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr style="font-weight: 900; color: black;">
+                                        <td colspan="3" align="right">Dues</td>
+                                        <td id="dues" align="right"></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary pull-right" id="purchaseResetBtn">Reset</button>
+                    <button type="button" id="purchaseCreateBtn" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{ 
+<script>
+    (function () {
+        let ajaxOperation = new AjaxOperation();
+        let selector = {
+            invoiceNumber: $("#invoiceNumber"),
+
+
+
+
+            inventoryStorage:[],
+        };
+
+        class OnloadProcess{
+            constructor() { }
+            GetInvoiceNumber() {
+                let invoiceNumber = ajaxOperation.GetAjax("SalesInvoice/GetInvoiceNumber/");
+                selector.invoiceNumber.text(invoiceNumber);
+            }
+            GetAvailableQuantity() {
+                selector.inventoryStorage = ajaxOperation.GetAjax("SalesInvoice/GetInventory");
+                console.log(selector.inventoryStorage);
+            }
+
+        }
+        let onloadProcess = new OnloadProcess();
+        window.onload = function () {
+            onloadProcess.GetInvoiceNumber();
+            onloadProcess.GetAvailableQuantity();
+        }
+    })();
+</script>
+}

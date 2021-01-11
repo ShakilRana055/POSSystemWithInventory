@@ -6,16 +6,22 @@ using System.Threading.Tasks;
 
 namespace POSSystemWithInventory.EntityModel
 {
-    public class Inventory:BaseClass
+    public class SalesInvoiceDetail:BaseClass
     {
         public int Id { get; set; }
+        public string InvoiceNumber { get; set; }
+        public int? SalesInvoiceId { get; set; }
+        public SalesInvoice SalesInvoice { get; set; }
         public int? ProductId { get; set; }
         public Product Product { get; set; }
 
         [Column(TypeName = "decimal(16,2)")]
-        public decimal AvailableQuantity { get; set; }
+        public decimal Quantity { get; set; }
 
         [Column(TypeName = "decimal(16,2)")]
-        public decimal SellPrice { get; set; }
+        public decimal UnitPrice { get; set; }
+
+        [Column(TypeName = "decimal(16,2)")]
+        public decimal Price { get; set; }
     }
 }

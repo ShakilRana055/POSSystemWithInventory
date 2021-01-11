@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using POSSystemWithInventory.Data;
 
 namespace POSSystemWithInventory.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210111151949_SalesInvoiceUpdated")]
+    partial class SalesInvoiceUpdated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -250,9 +252,6 @@ namespace POSSystemWithInventory.Migrations
 
                     b.Property<int?>("ProductId")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("SellPrice")
-                        .HasColumnType("decimal(16,2)");
 
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");

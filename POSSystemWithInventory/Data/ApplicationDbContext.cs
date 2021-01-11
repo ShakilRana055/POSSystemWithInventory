@@ -25,6 +25,8 @@ namespace POSSystemWithInventory.Data
         public DbSet<Product> Product { get; set; }
         public DbSet<PurchaseProduct> PurchaseProduct { get; set; }
         public DbSet<PurchaseProductDetail> PurchaseProductDetail { get; set; }
+        public DbSet<SalesInvoice> SalesInvoice { get; set; }
+        public DbSet<SalesInvoiceDetail> SalesInvoiceDetail { get; set; }
         public DbSet<Stock> Stock { get; set; }
         public DbSet<StockDetails> StockDetail { get; set; }
         public DbSet<Supplier> Supplier { get; set; }
