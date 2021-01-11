@@ -65,6 +65,7 @@
                                 <div class="form-group">
                                     <label asp-for="SupplierId" class="control-label">Supplier Name</label>
                                     <select asp-for="SupplierId" asp-items="@Model.SupplierItem" class="form-control select2">
+                                        <option value="">-----Select-----</option>
                                     </select>
                                     <span asp-validation-for="SupplierId" class="text-danger"></span>
                                 </div>
@@ -73,6 +74,7 @@
                                 <div class="form-group">
                                     <label asp-for="PurchaseProductDetail.ProductId" class="control-label">Product Name</label>
                                     <select asp-for="PurchaseProductDetail.ProductId" asp-items="@Model.ProductItem" class="form-control select2">
+                                        <option value="">-----Select-----</option>
                                     </select>
                                     <span asp-validation-for="PurchaseProductDetail.ProductId" class="text-danger"></span>
                                 </div>
@@ -307,7 +309,6 @@
                 if (text === "")
                     return 1;
                 let vat = text.split("|");
-                console.log(vat);
                 return Number(vat[1]);
             }
             Summation(className) {
@@ -400,14 +401,26 @@
                     paidAmount: selector.paidAmount.val(),
                     dues: Number(selector.dues.text()),
                     paymentMode: selector.paymentMode.val(),
-                    purchaseProductDetail: details,
+                    purchaseProductDetails: details,
                 };
                 return jsonData;
+            }
+            ResetAll() {
+                selector.supplierId.val("").trigger("change");
+                selector.productId.val("").trigger("change");
+                selector.purchaseProductTBody.html("");
+
+                selector.subTotal.text("");
+                selector.grandTotal.text("");
+                selector.discountAmount.val("");
+                selector.paymentMode.val("Cash");
+                selector.paidAmount.val("");
+                selector.dues.text("");
             }
         }
 
         let process = new Process();
-
+        let loadingProcess = new OnloadProcess();
         window.onload = function () {
             let onloadProcess = new OnloadProcess();
             onloadProcess.GetInvoiceNumber();
@@ -493,9 +506,11 @@
         selector.purchaseCreateBtn.click(function () {
             if (process.Validation()) {
                 let jsonData = process.MakeJsonData();
-                let response = ajaxOperation.SaveAjax("/Inventory/Index", jsonData);
+                let response = ajaxOperation.SavePostAjax("/Inventory/Index", jsonData);
                 if (response) {
                     toastr.success("Successfully Saved!", "Success!");
+                    process.ResetAll();
+                    loadingProcess.GetInvoiceNumber();
                 }
             }
             else {
@@ -503,7 +518,7 @@
             }
         });
         selector.purchaseResetBtn.click(function () {
-            alert("clicked");
+            process.ResetAll();
         })
     })();
 </script>

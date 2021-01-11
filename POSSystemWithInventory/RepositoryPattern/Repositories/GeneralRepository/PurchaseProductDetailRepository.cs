@@ -1,4 +1,5 @@
-﻿using POSSystemWithInventory.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using POSSystemWithInventory.Data;
 using POSSystemWithInventory.EntityModel;
 using POSSystemWithInventory.RepositoryPattern.Interfaces.GeneralInterface;
 using System;
@@ -15,6 +16,16 @@ namespace POSSystemWithInventory.RepositoryPattern.Repositories.GeneralRepositor
         public PurchaseProductDetailRepository(AppDbContext appDbContex):base(appDbContex)
         {
             context = appDbContex;
+        }
+        public IEnumerable<PurchaseProductDetail> GetAllWithRelatedData(string invoiceNumber)
+        {
+            var result = context.PurchaseProductDetail
+                            .Include(x => x.Product)
+                                .ThenInclude(x => x.Unit)
+                            .Include(x => x.VatAndTax)
+                            .Where( x => x.InvoiceNumber == invoiceNumber)
+                            .ToList();
+            return result;
         }
     }
 }

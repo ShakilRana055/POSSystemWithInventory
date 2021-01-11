@@ -183,6 +183,11 @@ namespace POSSystemWithInventory.Controllers
                 if (product != null)
                 {
                     context.Product.Remove(product);
+                    var inventory = context.Inventory.Find(x => x.Id == id).FirstOrDefault();
+                    if(inventory != null)
+                    {
+                        context.Inventory.Remove(inventory);
+                    }
                     context.Save();
                     return Json(true);
                 }

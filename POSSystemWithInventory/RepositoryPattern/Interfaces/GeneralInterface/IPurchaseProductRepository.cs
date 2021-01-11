@@ -8,6 +8,8 @@ namespace POSSystemWithInventory.RepositoryPattern.Interfaces.GeneralInterface
 {
     public interface IPurchaseProductRepository: IBaseRepository<PurchaseProduct>
     {
-
+        public PurchaseProduct GetLastOrDefault();
+        public IEnumerable<PurchaseProduct> GetAllWithRelatedData();
+        public PurchaseProduct GetAllWithRelatedData(string invoiceNumber);
     }
 }

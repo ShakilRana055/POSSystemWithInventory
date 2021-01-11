@@ -18,6 +18,20 @@ class AjaxOperation {
         return data;
     }
 
+    SavePostAjax(destination, jsonData) {
+        let data;
+        $.ajax({
+            url: destination,
+            type: "POST",
+            data: jsonData,
+            async: false,
+            success: function (response) {
+                data = response;
+            }
+        });
+        return data;
+    }
+
     DeleteAjaxById(destination, jsonData) {
         let data;
         $.ajax({
