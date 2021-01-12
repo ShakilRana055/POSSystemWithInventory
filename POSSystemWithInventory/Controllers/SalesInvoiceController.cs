@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using POSSystemWithInventory.ConstantAndHelpers;
+using POSSystemWithInventory.EntityModel;
 using POSSystemWithInventory.Models;
 using POSSystemWithInventory.RepositoryPattern.Interfaces.IUnitOfWork;
 
@@ -36,7 +37,60 @@ namespace POSSystemWithInventory.Controllers
             return View();
         }
 
+        [HttpPost]
+        public IActionResult Index(SalesInvoiceVM salesInvoiceVM)
+        {
+            try
+            {
+                SalesInvoice salesInvoice = new SalesInvoice()
+                {
+                    InvoiceNumber = salesInvoiceVM.InvoiceNumber,
+                    CustomerId = salesInvoiceVM.CustomerId,
+                    SubTotal = salesInvoiceVM.SubTotal,
+                    Discount = salesInvoiceVM.Discount,
+                    GrandTotal = salesInvoiceVM.GrandTotal,
+                    PaidAmount = salesInvoiceVM.PaidAmount,
+                    Dues = salesInvoiceVM.Dues,
+                    VatAndTaxId = salesInvoiceVM.VatAndTaxId,
+                };
+                context.SalesInvoice.Add(salesInvoice);
+                context.Save();
+
+                foreach (var item in salesInvoiceVM.SalesInvoiceDetails)
+                {
+                    SalesInvoiceDetail salesInvoiceDetail = new SalesInvoiceDetail()
+                    {
+                        InvoiceNumber = item.InvoiceNumber,
+                        SalesInvoiceId = salesInvoice.Id,
+                        ProductId = item.ProductId,
+                        Quantity = item.Quantity,
+                        UnitPrice = item.UnitPrice,
+                    };
+                    DecrementIneventory(item.ProductId, item.Quantity);
+                    context.SalesInvoiceDetail.Add(salesInvoiceDetail);
+                    context.Save();
+                }
+                
+                return Json(true);
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+                throw ex;
+            }
+        }
         #region Actions and Helpers
+
+        private void DecrementIneventory(int? productId, decimal quantity)
+        {
+            var inventory = context.Inventory.Find(item => item.ProductId == productId).FirstOrDefault();
+            if(inventory != null)
+            {
+                inventory.AvailableQuantity -= quantity;
+                inventory.UpdatedDate = DateTime.Now.ToShortDateString();
+                context.Save();
+            }
+        }
         private string InvoiceNumber()
         {
             var lastSalesInvoice = context.SalesInvoice.GetLastOrDefault();

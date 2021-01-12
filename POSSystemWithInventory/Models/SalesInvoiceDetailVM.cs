@@ -18,5 +18,7 @@ namespace POSSystemWithInventory.Models
 
         [Column(TypeName = "decimal(16,2)")]
         public decimal Price { get; set; }
+        [Column(TypeName = "decimal(16,2)")]
+        public decimal UnitPrice { get; set; }
     }
 }

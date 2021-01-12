@@ -61,7 +61,7 @@
                                 <div class="form-group">
                                     <label asp-for="CustomerId" class="control-label">Customer Name</label>
                                     <select asp-for="CustomerId" asp-items="@Model.CustomerItem" class="form-control select2">
-                                        <option value="">-----Select-----</option>
+                                        
                                     </select>
                                     <span asp-validation-for="CustomerId" class="text-danger"></span>
                                 </div>
@@ -70,14 +70,14 @@
                                 <div class="form-group">
                                     <label asp-for="SalesInvoiceDetail.ProductId" class="control-label">Product Name</label>
                                     <select asp-for="SalesInvoiceDetail.ProductId" asp-items="@Model.ProductItem" class="form-control select2">
-                                        <option value="">-----Select-----</option>
+                                        
                                     </select>
                                     <span asp-validation-for="SalesInvoiceDetail.ProductId" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group" style="margin-top: 22px;">
-                                    <button type="button" id="purchaseAddBtn" class="btn btn-success btn-sm">Add</button>
+                                    <button type="button" id="salesInvoiceAddBtn" class="btn btn-success btn-sm">Add</button>
                                 </div>
                             </div>
                         </div>
@@ -103,8 +103,14 @@
                                     <tr style="font-weight: 900;color: black;">
                                         <td colspan="3" align="right">Discount</td>
                                         <td id="discount">
-                                            <input type="number" style="width:90% !important; float: left;" class="form-control rightAlign" id="discountAmount" />
-                                            <span style="width: 10% !important;float: left; margin-top:7px;">%</span>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                </div>
+                                                <input type="number" class="form-control rightAlign" id="discountAmount" >
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text"><b>%</b></span>
+                                                </div>
+                                            </div>
                                         </td>
                                         <td>
                                             <select class="form-control" asp-for="VatAndTaxId" asp-items="@Model.VatItem"></select>
@@ -137,8 +143,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary pull-right" id="purchaseResetBtn">Reset</button>
-                    <button type="button" id="purchaseCreateBtn" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary pull-right" id="salesInvoiceResetBtn">Reset</button>
+                    <button type="button" id="salesInvoiceCreateBtn" class="btn btn-primary">Save</button>
                 </div>
             </div>
         </form>
@@ -147,15 +153,40 @@
 
 @section Scripts{ 
 <script>
+
     (function () {
         let ajaxOperation = new AjaxOperation();
         let selector = {
             invoiceNumber: $("#invoiceNumber"),
+            customerId: $("#CustomerId"),
+            salesInvoiceResetBtn: $("#salesInvoiceResetBtn"),
+            salesInvoiceCreateBtn: $("#salesInvoiceCreateBtn"),
+            salesInvoiceAddBtn: $("#salesInvoiceAddBtn"),
+            productId: $("#SalesInvoiceDetail_ProductId"),
+            salesInvoiceTBody: $("#salesInvoiceTBody"),
+            subTotal: $("#subTotal"),
+            discountAmount: $("#discountAmount"),
+            vatAndTaxId: $("#VatAndTaxId"),
+            grandTotal: $("#grandTotal"),
+            paidAmount: $("#paidAmount"),
+            dues: $("#dues"),
+            paymentMode: $("#paymentMode"),
+
+
+            productInfo: ".productInfo",
+            decrementQuantity: ".decrementQuantity",
+            quantityInfo: ".quantityInfo",
+            incrementQuantity: ".incrementQuantity",
+            unitPriceInfo: ".unitPriceInfo",
+            priceInfo: ".priceInfo",
+            deleteRow: ".deleteRow",
 
 
 
-
-            inventoryStorage:[],
+            productStorage: [],
+            inventoryStorage: [],
+            serialNumber: 1,
+            rowId : 1,
         };
 
         class OnloadProcess{
@@ -166,15 +197,312 @@
             }
             GetAvailableQuantity() {
                 selector.inventoryStorage = ajaxOperation.GetAjax("SalesInvoice/GetInventory");
-                console.log(selector.inventoryStorage);
             }
 
         }
+        class SalesInvoiceDetail {
+            constructor(InvoiceNumber, ProductId, Quantity, UnitPrice, Price) {
+                this.InvoiceNumber = InvoiceNumber;
+                this.ProductId = ProductId;
+                this.Quantity = Quantity;
+                this.UnitPrice = UnitPrice;
+                this.Price = Price;
+            }
+        }
+
+        class Process{
+            constructor() { }
+            AddEntryColumn(productName, productId, quantity, unitPrice, price) {
+                selector.productStorage.push(productId);
+
+                let data = `<tr id = "rowId${selector.rowId}">
+                            <td> <a class="productInfo" productId="${productId}" serialNumber="${selector.serialNumber}">${productName}</a> </td>
+                            
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-danger btn-sm decrementQuantity" tittle = "Decrement" productId="${productId}" unitPrice = "${unitPrice}" serialNumber="${selector.serialNumber}" type="button"><i class="fa fa-minus-circle"></i></button>
+                                    </div>
+                                    <input type="number" class="form-control quantityInfo" style = "text-align: center;" unitPrice = "${unitPrice}" productId="${productId}" serialNumber="${selector.serialNumber}" value="${quantity}">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-success btn-sm incrementQuantity" tittle = "Increment" productId="${productId}" unitPrice = "${unitPrice}" serialNumber="${selector.serialNumber}" type="button"><i class="fa fa-plus-circle"></i></button>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="form-control unitPriceInfo rightAlign" style = "border:none;" serialNumber="${selector.serialNumber}" value="${unitPrice}" readonly>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="form-control priceInfo rightAlign" style = "border:none;" serialNumber="${selector.serialNumber}" value="${price}" readonly>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group" style = "align:center;">
+                                    <button class="btn btn-danger btn-sm deleteRow" rowId="rowId${selector.rowId}" serialNumber="${selector.serialNumber}"><i class="fa fa-trash-alt"></i></button>
+                                </div>
+                            </td>
+                    </tr>`;
+                selector.serialNumber++;
+                selector.rowId++;
+                return data;
+            }
+            InventorySearch(inventoryStorage, productId) {
+                let index = inventoryStorage.findIndex(item => item.productId === Number(productId));
+                return inventoryStorage[index];
+            }
+            ProductSearch(productStorage, productId) {
+                let index = productStorage.findIndex(item => item === productId);
+                return index === -1 ? false : true;
+            }
+            CalculateSum(className) {
+                let value = 0;
+                $(className).each(function () {
+                    value += Number($(this).val());
+                });
+                return value;
+            }
+            VatAndTax() {
+                let text = selector.vatAndTaxId.children("option").filter(":selected").text();
+                let vat = text.split("|");
+                return Number(vat[1]);
+            }
+            CalculateDiscount(price, discount) {
+                let decrement = (price / 100) * discount;
+                return (price - decrement);
+            }
+            CalculateVat(price, vatAndTax) {
+                let addingVat = (price / 100) * vatAndTax;
+                return (price + addingVat);
+            }
+            MultipleTask() {
+                let priceInfo = this.CalculateSum(selector.priceInfo);
+                let discountAmount = selector.discountAmount.val() === "" ? 0 : selector.discountAmount.val();
+                let vatAndTax = this.VatAndTax();
+                let afterDiscount = this.CalculateDiscount(priceInfo, discountAmount);
+                let afterAddingVat = this.CalculateVat(afterDiscount, vatAndTax);
+                selector.subTotal.text(priceInfo.toFixed(2));
+                selector.grandTotal.text(afterAddingVat.toFixed(2));
+                selector.paidAmount.val(afterAddingVat.toFixed(2));
+                selector.dues.text(0);
+            }
+            SetValue(className, serialNumber, value) {
+                $(className).each(function () {
+                    if ($(this).attr("serialNumber") === serialNumber)
+                        $(this).val(value);
+                });
+            }
+            GetCurrentValue(className, serialNumber) {
+                let value;
+                $(className).each(function () {
+                    if ($(this).attr("serialNumber") === serialNumber)
+                        value = $(this).val();
+                });
+                return value;
+            }
+            GetAvailableQuantity(inventoryStorage, productId) {
+                let index = inventoryStorage.findIndex(item => item.productId === Number(productId));
+                return inventoryStorage[index];
+            }
+            DecrementQuantity(quantity, productId, serialNumber, unitPrice) {
+                let price = quantity * unitPrice;
+                this.SetValue(selector.priceInfo, serialNumber, price.toFixed(2));
+                this.MultipleTask();
+            }
+            IncrementQuantity(quantity, productId, serialNumber, unitPrice) {
+                let price = quantity * unitPrice;
+                this.SetValue(selector.priceInfo, serialNumber, price.toFixed(2));
+                this.MultipleTask();
+            }
+            DeleteRow(deleteId) {
+                let selfThis = this;
+                let htmlData = "";
+                selector.productStorage = [];
+                $("#salesInvoiceTBody tr").each(function (i, row) {
+                    let rowId = row.id;
+                    let productName = $(this).find("td .productInfo").text();
+                    let productId = $(this).find("td .productInfo").attr("productId");
+                    let quantityInfo = $(this).find("td .quantityInfo").val();
+                    let unitPrice = $(this).find("td .unitPriceInfo").val();
+                    let price = $(this).find("td .priceInfo").val();
+                    if (rowId != deleteId) {
+                        htmlData += selfThis.AddEntryColumn(productName, productId, quantityInfo, unitPrice, price);
+                    }
+                    
+                });
+                selector.salesInvoiceTBody.html(htmlData);
+                selfThis.MultipleTask();
+            }
+            IterateOverRow() {
+                let salesInvoiceList = [];
+                $("#salesInvoiceTBody tr").each(function (i, row) {
+                    let invoiceNumber = selector.invoiceNumber.text();
+                    let productName = $(this).find("td .productInfo").text();
+                    let productId = $(this).find("td .productInfo").attr("productId");
+                    let quantityInfo = $(this).find("td .quantityInfo").val();
+                    let unitPrice = $(this).find("td .unitPriceInfo").val();
+                    let price = $(this).find("td .priceInfo").val();
+                    let obj = new SalesInvoiceDetail(invoiceNumber, productId, quantityInfo, unitPrice, price);
+                    salesInvoiceList.push(obj);
+                });
+                return salesInvoiceList;
+            }
+            MakeJsonData() {
+                let jsonData = {
+                    InvoiceNumber: selector.invoiceNumber.text(),
+                    CustomerId: selector.customerId.val(),
+                    SubTotal: selector.subTotal.text(),
+                    Discount: selector.discountAmount.val(),
+                    GrandTotal: selector.grandTotal.text(),
+                    PaidAmount: selector.paidAmount.val(),
+                    Dues: selector.dues.text(),
+                    PaymentMode: selector.paymentMode.val(),
+                    VatAndTaxId: selector.vatAndTaxId.val(),
+                    SalesInvoiceDetails: this.IterateOverRow(),
+                }
+                return jsonData;
+            }
+            ResetAll() {
+                selector.salesInvoiceTBody.html("");
+                $(".form-control").val('');
+            }
+        }
         let onloadProcess = new OnloadProcess();
+        let process = new Process();
         window.onload = function () {
             onloadProcess.GetInvoiceNumber();
             onloadProcess.GetAvailableQuantity();
         }
+
+        selector.salesInvoiceAddBtn.click(function () {
+            let productId = selector.productId.val();
+            let productName = $("#SalesInvoiceDetail_ProductId option:selected").text();
+            if (productId != "") {
+
+                let productInfo = process.InventorySearch(selector.inventoryStorage, productId);
+                if (productInfo.availableQuantity > 0 && productInfo != null) {
+                    if (selector.productStorage.length === 0) {
+                        let data = process.AddEntryColumn(productName, productId, 1, productInfo.sellPrice.toFixed(2), productInfo.sellPrice.toFixed(2));
+                        selector.salesInvoiceTBody.append(data);
+                        process.MultipleTask();
+                    }
+                    else if (process.ProductSearch(selector.productStorage, productId) === false) {
+                        let data = process.AddEntryColumn(productName, productId, 1, productInfo.sellPrice.toFixed(2), productInfo.sellPrice.toFixed(2));
+                        let rowCount = selector.salesInvoiceTBody.find("tr").length;
+                        rowCount > 0 ? $("#salesInvoiceTBody tr:first").before(data) : selector.salesInvoiceTBody.append(data);
+                        process.MultipleTask();
+                    }
+                    else {
+                        toastr.error("Already Taken!", "Error");
+                    }
+                    
+                }
+                else {
+                    toastr.error("Out of Stock!", "Error");
+                }
+            }
+            else {
+                toastr.error("Select a Product!", "Error");
+            }
+            
+        });
+
+        $(document).on("click", selector.decrementQuantity, function () {
+            let productId = $(this).attr("productId");
+            let serialNumber = $(this).attr("serialNumber");
+            let unitPrice = $(this).attr("unitPrice");
+            let quantity = process.GetCurrentValue(selector.quantityInfo, serialNumber);
+            if (quantity > 1) {
+                process.SetValue(selector.quantityInfo, serialNumber, quantity - 1);
+                process.DecrementQuantity(quantity - 1, productId, serialNumber, unitPrice);
+            }
+            else {
+                toastr.error("Quantity is underflow!", "Error");
+            }
+        });
+
+        $(document).on("click", selector.incrementQuantity, function () {
+            let productId = $(this).attr("productId");
+            let serialNumber = $(this).attr("serialNumber");
+            let unitPrice = $(this).attr("unitPrice");
+            let quantity = process.GetCurrentValue(selector.quantityInfo, serialNumber);
+            let availableQuantity = process.GetAvailableQuantity(selector.inventoryStorage, productId);
+            if (quantity < availableQuantity.availableQuantity) {
+                process.SetValue(selector.quantityInfo, serialNumber, Number(quantity) + 1);
+                process.IncrementQuantity(Number(quantity)+ 1, productId, serialNumber, unitPrice);
+            }
+            else {
+                toastr.error("Quantity is Overflow!", "Error");
+            }
+        });
+
+        $(document).on("change", selector.quantityInfo, function () {
+            let quantity = Number($(this).val());
+            if (quantity < 1) {
+                $(this).val(1);
+                process.MultipleTask();
+            }
+            else {
+                let productId = $(this).attr("productId");
+                let serialNumber = $(this).attr("serialNumber");
+                let unitPrice = $(this).attr("unitPrice");
+                let availableQuantity = process.GetAvailableQuantity(selector.inventoryStorage, productId);
+                if (Number(quantity) <= Number(availableQuantity.availableQuantity)) {
+                    process.SetValue(selector.priceInfo, serialNumber, unitPrice * quantity);
+                    process.MultipleTask();
+                }
+                else {
+                    $(this).val(1);
+                    process.MultipleTask();
+                    toastr.error("Quantity is Overflow!", "Error");
+                }
+            }
+        });
+
+        $(document).on("click", selector.deleteRow, function () {
+            let rowId = $(this).attr("rowId");
+            let htmlData = process.DeleteRow(rowId);
+        });
+
+        selector.discountAmount.keyup(function () {
+            process.MultipleTask();
+        });
+        selector.vatAndTaxId.change(function () {
+            process.MultipleTask();
+        });
+
+        selector.paidAmount.keyup(function () {
+            let paidAmount = Number($(this).val());
+            let grandTotal = Number(selector.grandTotal.text());
+            if (paidAmount <= grandTotal) {
+                selector.dues.text((grandTotal - paidAmount).toFixed(2));
+            }
+            else {
+                process.MultipleTask();
+                toastr.error("Invalid Paid Amount!", "Error");
+            }
+
+        });
+
+        selector.salesInvoiceCreateBtn.click(function () {
+            let jsonData = process.MakeJsonData();
+            let response = ajaxOperation.SavePostAjax("/SalesInvoice/Index", jsonData);
+            if (response) {
+                toastr.success("Successfully Saved!", "Success");
+                onloadProcess.GetInvoiceNumber();
+                onloadProcess.GetAvailableQuantity();
+                process.ResetAll();
+            }
+            else {
+                toastr.error("Something went wrong!", "Error");
+            }
+        });
+
+        
+
     })();
 </script>
 }
