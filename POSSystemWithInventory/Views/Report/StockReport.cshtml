@@ -1,0 +1,118 @@
+﻿
+@{
+    ViewData["Title"] = "Stock Report";
+    Layout = "~/Views/Shared/_POSLayout.cshtml";
+}
+
+<style>
+    .odd {
+        background-color: #b3ffff;
+    }
+
+    .even {
+        background-color: #b3b3ff;
+    }
+
+    .rightAlign{
+        text-align:right;
+    }
+    .centerAlign{
+        text-align:center;
+    }
+    #stockList tr td{
+        font-weight:bold;
+    }
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div id="headingOne" class="card-header bg-blue1">
+                <button type="button" data-toggle="collapse" data-target="#advanceSearchProductList" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
+                    <h5 class="m-0 p-0" style="color: #fff;">Stock Report</h5>
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="advanceSearchProductList" class="collapse show">
+                    <div class="row table-responsive">
+                        <table class="table table-hover table-bordered" id="stockList">
+                            <thead style="background-color:coral;">
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Warning Quantity</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                            <tfoot style="background-color:coral;">
+                                <tr>
+                                    <td colspan="3" class="rightAlign">total</td>
+                                    <td class="rightAlign" id="totalPrice"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        (function () {
+
+            let selector = {
+                productList: $("#stockList"),
+                totalPrice: $("#totalPrice"),
+            };
+
+            function GenerateBrandList() {
+                let totalPrice = 0;
+
+                var brandList = selector.productList.dataTable({
+                    "processing": true,
+                    "serverSide": true,
+                    "filter": true,
+                    "pageLength": 10,
+                    "autoWidth": false,
+                    "lengthMenu": [[10, 50, 100, 150, 200, 500], [10, 50, 100, 150, 200, 500]],
+                    "order": [[0, "desc"]],
+                    "ajax": {
+                        "url": "/Report/GetStockReport/",
+                        "type": "POST",
+                        "data": function (data) {
+
+                        },
+                        "complete": function (json) {
+
+                        }
+                    },
+                    "columnDefs": [
+                        { "className": "centerAlign", "targets": [0, 1, 2] },
+                        { "className": "rightAlign", "targets": [3] },
+                    ],
+                    "columns": [
+                        { "data": "product.name", "name": "product.name", "autowidth": true, "orderable": true },
+                        { "data": "availableQuantity", "name": "availableQuantity", "autowidth": true, "orderable": true },
+                        { "data": "product.warningQuantity", "name": "product.warningQuantity", "autowidth": true, "orderable": true },
+                        {
+                            "render": function (data, type, full, meta) {
+                                totalPrice += (full.availableQuantity * full.sellPrice);
+                                selector.totalPrice.text(totalPrice.toFixed(2));
+                                return (full.availableQuantity * full.sellPrice).toFixed(2);
+                            }
+                        },
+                        
+                    ]
+                });
+                
+            }
+
+            window.onload = function () {
+                GenerateBrandList();
+            }
+        })();
+    </script>
+}

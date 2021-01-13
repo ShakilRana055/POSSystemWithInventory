@@ -51,6 +51,8 @@ namespace POSSystemWithInventory.Controllers
                 var getUser = context.User.Find(x => x.Email == userLoginVM.Email && x.Password == userLoginVM.Password).FirstOrDefault();
                 if(getUser != null)
                 {
+                    getUser.HasLogged = true;
+                    context.Save();
                     return RedirectToAction("Index", "Dashboard");
                 }
                 else

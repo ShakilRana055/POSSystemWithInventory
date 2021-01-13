@@ -1,4 +1,5 @@
-﻿using POSSystemWithInventory.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using POSSystemWithInventory.Data;
 using POSSystemWithInventory.EntityModel;
 using POSSystemWithInventory.RepositoryPattern.Interfaces.GeneralInterface;
 using System;
@@ -20,6 +21,23 @@ namespace POSSystemWithInventory.RepositoryPattern.Repositories.GeneralRepositor
         {
             var result = context.SalesInvoice.OrderByDescending(x => x.Id).Take(1).FirstOrDefault();
             return result;
+        }
+        public IEnumerable<SalesInvoice> GetAllWithRelatedData()
+        {
+            var response = context.SalesInvoice
+                .Include(x => x.Customer)
+                .Include(x => x.VatAndTax)
+                .ToList();
+            return response;
+        }
+        public SalesInvoice GetAllWithRelatedData(string invoiceNumber)
+        {
+            var response = context.SalesInvoice
+                .Include(x => x.Customer)
+                .Include(x => x.VatAndTax)
+                .Where(item => item.InvoiceNumber == invoiceNumber)
+                .FirstOrDefault();
+            return response;
         }
     }
 }

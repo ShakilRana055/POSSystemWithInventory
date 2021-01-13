@@ -161,6 +161,7 @@
             customerId: $("#CustomerId"),
             salesInvoiceResetBtn: $("#salesInvoiceResetBtn"),
             salesInvoiceCreateBtn: $("#salesInvoiceCreateBtn"),
+            salesInvoiceResetBtn: $("#salesInvoiceResetBtn"),
             salesInvoiceAddBtn: $("#salesInvoiceAddBtn"),
             productId: $("#SalesInvoiceDetail_ProductId"),
             salesInvoiceTBody: $("#salesInvoiceTBody"),
@@ -368,6 +369,10 @@
             ResetAll() {
                 selector.salesInvoiceTBody.html("");
                 $(".form-control").val('');
+                selector.subTotal.text("");
+                selector.grandTotal.text("");
+                selector.productStorage = [];
+                
             }
         }
         let onloadProcess = new OnloadProcess();
@@ -501,7 +506,9 @@
             }
         });
 
-        
+        selector.salesInvoiceResetBtn.click(function () {
+            process.ResetAll();
+        })
 
     })();
 </script>

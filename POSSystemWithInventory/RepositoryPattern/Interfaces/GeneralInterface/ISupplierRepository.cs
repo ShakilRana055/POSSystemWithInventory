@@ -8,5 +8,6 @@ namespace POSSystemWithInventory.RepositoryPattern.Interfaces.GeneralInterface
 {
     public interface ISupplierRepository:IBaseRepository<Supplier>
     {
+        public List<PurchaseProduct> SupplierReport();
     }
 }

@@ -9,5 +9,7 @@ namespace POSSystemWithInventory.RepositoryPattern.Interfaces.GeneralInterface
     public interface ISalesInvoiceRepository: IBaseRepository<SalesInvoice>
     {
         public SalesInvoice GetLastOrDefault();
+        public IEnumerable<SalesInvoice> GetAllWithRelatedData();
+        public SalesInvoice GetAllWithRelatedData(string invoiceNumber);
     }
 }

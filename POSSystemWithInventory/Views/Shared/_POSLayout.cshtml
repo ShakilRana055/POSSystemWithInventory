@@ -184,55 +184,15 @@
                        data-original-title="Sales Management">
                         <i class="fas fa-cash-register"></i>
                     </a>
-
-
-                    <a href="#productionManagement" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
-                       data-original-title="Production">
-                        <i class="fas fa-industry"></i>
-                    </a>
-                    <a href="#salesMarketing" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
-                       data-original-title="Sales & Marketing">
+                    <a href="#reportManagement" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
+                       data-original-title="Report">
                         <i class="fas fa-chart-pie"></i>
                     </a>
-                    <a href="#serviceSupport" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
-                       data-original-title="Service & Support">
-                        <i class="fas fa-headset"></i>
-                    </a>
-                    <a href="#taskManagement" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
-                       data-original-title="Task Management">
-                        <i class="fas fa-tasks"></i>
-                    </a>
-                    <a href="#customerRelations" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
-                       data-original-title="Customer Relations">
-                        <i class="fas fa-handshake"></i>
-                    </a>
-                    <a href="#marketAnalysis" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
-                       data-original-title="Market Analysis">
-                        <i class="fas fa-chart-area"></i>
-                    </a>
-
-                    <a href="#researchDevelopments" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
-                       data-original-title="Research & Developments">
-                        <i class="fab fa-searchengin"></i>
-                    </a>
-
                     <a href="#mainSettings" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
-                       data-original-title="Main Settings">
+                       data-original-title="Settings">
                         <i class="dripicons-gear"></i>
                     </a>
-
-                    <a class="nav-link-custom" data-toggle="tooltip-custom" data-placement="top" title=""
-                       data-original-title="Configuration" asp-area="" asp-controller="home" asp-action="">
-                        <i class="dripicons-toggles"></i>
-                    </a>
-                    <a href="#pos" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
-                       data-original-title="POS">
-                        <i class="fas fa-calculator"></i>
-                    </a>
-                    <a href="#somethingElse" class="nav-link" data-toggle="tooltip-custom" data-placement="top" title=""
-                       data-original-title="Users">
-                        <i class="fas fa-dollar-sign"></i>
-                    </a>
+                    
                 </nav><!--end nav-->
             </div><!--end main-icon-menu-->
 
@@ -317,6 +277,43 @@
                                 <ul class="nav-second-level" aria-expanded="false">
                                     <li><a asp-controller="SalesInvoice" asp-action="Index">Add Sale</a></li>
                                     <li><a asp-controller="SalesInvoice" asp-action="SalesInvoiceList">Sales List</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div id="reportManagement" class="main-icon-menu-pane">
+                            <div class="title-box">
+                                <h6 class="menu-title">Report</h6>
+                            </div>
+                            <ul class="nav metismenu" id="main_menu_side_nav">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">
+                                        <i class="dripicons-document"></i><span class="w-100">Report</span>
+                                        <span class="menu-arrow"><i class="mdi mdi-chevron-right"></i></span>
+                                    </a>
+                                    <ul class="nav-second-level" aria-expanded="false">
+                                        <li><a asp-controller="Report" asp-action="StockReport">Stock Report</a></li>
+                                        <li><a asp-controller="Report" asp-action="SupplierReport">Supplier Report</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+
+                    <div id="mainSettings" class="main-icon-menu-pane">
+                        <div class="title-box">
+                            <h6 class="menu-title">Settings</h6>
+                        </div>
+                        <ul class="nav metismenu" id="main_menu_side_nav">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="dripicons-document"></i><span class="w-100">Setting</span>
+                                    <span class="menu-arrow"><i class="mdi mdi-chevron-right"></i></span>
+                                </a>
+                                <ul class="nav-second-level" aria-expanded="false">
+                                    <li><a asp-controller="Setting" asp-action="SendEmailToSupplier">Email to Supplier</a></li>
+                                    <li><a asp-controller="Setting" asp-action="SendEmailToCustomer">Email to Customer</a></li>
+                                    <li><a asp-controller="Setting" asp-action="ChangePassword">Change Password</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -490,6 +487,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.all.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.js"></script>
+    @* block ui js *@
+    <script src="~/layout/assets/plugins/block-ui/block-UI.js"></script>
 
     @RenderSection("Styles", required: false)
     @RenderSection("Scripts", required: false)

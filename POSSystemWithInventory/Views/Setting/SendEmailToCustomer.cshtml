@@ -1,0 +1,107 @@
+﻿@model POSSystemWithInventory.Models.SettingVM
+@{
+    ViewData["Title"] = "Email to Customer";
+    Layout = "~/Views/Shared/_POSLayout.cshtml";
+}
+
+
+<style>
+    .odd {
+        background-color: #b3ffff;
+    }
+
+    .even {
+        background-color: #b3b3ff;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <form id="emailToSupplier" enctype="multipart/form-data">
+            <div class="card">
+                <div id="headingOne" class="card-header bg-blue1">
+                    <button type="button" data-toggle="collapse" data-target="#Collapse" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
+                        <h5 class="m-0 p-0" style="color: #fff;">Email to Customer</h5>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="Collapse" class="collapse show">
+                        <div class="row">
+                            <div class="col-md-2"></div>
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="basic-addon1">To</span>
+                                        </div>
+                                        <select type="text" class="form-control select2" multiple asp-for="Information" asp-items="@Model.SupplierItem">
+                                        </select>
+                                        <span asp-validation-for="Information" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="basic-addon1">Subject</span>
+                                        </div>
+                                        <input type="text" class="form-control" asp-for="Subject">
+                                        <span asp-validation-for="Subject" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Message</label>
+                                    <textarea style="height: 202px;" class="form-control" cols="5" asp-for="Message">
+    
+                                    </textarea>
+                                    <span asp-validation-for="Message" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-2"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="brandResetBtn">Cancel</button>
+                        <button type="button" id="sendEmail" class="btn btn-primary">Send</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        (function () {
+            $(document).ajaxStop($.unblockUI);
+
+            let ajaxOperation = new AjaxOperation();
+            let selector = {
+                sendEmail: $("#sendEmail"),
+                emailToSupplierForm: $("#emailToSupplier"),
+            };
+
+            selector.sendEmail.click(function () {
+                let formData = new FormData(selector.emailToSupplierForm[0]);
+                $.blockUI({
+                    css: {
+                        border: 'none',
+                        padding: '15px',
+                        backgroundColor: '#000',
+                        '-webkit-border-radius': '10px',
+                        '-moz-border-radius': '10px',
+                        opacity: .5,
+                        color: '#fff'
+                    }
+                });
+                let data = ajaxOperation.SaveAjax("/Setting/SendEmailToSupplier", formData);
+                if (data === true) {
+                    toastr.success('Email has been sent!', 'Success');
+                }
+                else {
+                    toastr.error('Error email sending!', 'Error');
+                }
+            });
+        })();
+    </script>
+
+}

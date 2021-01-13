@@ -1,0 +1,101 @@
+﻿
+@model POSSystemWithInventory.EntityModel.SalesInvoice
+
+<style>
+    #invoiceTable thead, tbody, tfoot {
+        font-weight: bold;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-10" style="background-color:ghostwhite;">
+        <table class="table table-borderless">
+            <tr>
+                <td id="companyLogo" rowspan="2"></td>
+                <td style="text-align:center;">
+                    <h3 id="companyName" style="font-weight: 500;">Company Name</h3><br />
+                    <h6 id="companySlogan" style="margin-top: -21px;font-size: 10px;">Slogan</h6>
+                </td>
+                <td width="20%"></td>
+                <td>
+                    <h3 style="font-weight: 900;">INVOICE</h3><br />
+                    <h6 style="margin-top: -21px;font-size: 9px;">No. <b id="invoiceNumber">#@Model.InvoiceNumber</b></h6>
+                </td>
+            </tr>
+            <tr>
+                <td> <h6 style="font-size: 11px;margin-top: -20px;">Email: admin@gmail.com</h6></td>
+                <td width="20%"></td>
+                <td>
+                    <h6 id="date" style="font-size: 11px;margin-top: -20px;">Date: @Convert.ToDateTime(Model.CreatedDate).ToString("dd MMM yyyy")</h6>
+                </td>
+            </tr>
+            <tr>
+                <td class="rightAlign">Customer Name:</td>
+                <td style="text-align:left;"><b>@Model.Customer.Name</b></td>
+                <td width="20%"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="rightAlign">Contact:</td>
+                <td style="text-align:left;"><b>@Model.Customer.Phone</b> <br /><b>@Model.Customer.Email</b></td>
+                <td width="20%"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="rightAlign">Payment Mode:</td>
+                <td style="text-align:left;"><b>@Model.PaymentMode</b></td>
+                <td width="20%"></td>
+                <td></td>
+            </tr>
+        </table>
+        <table class="table table-bordered" id="invoiceTable">
+            <thead style="text-align:center;">
+                <tr>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    foreach (var item in Model.SalesInvoiceDetails)
+                    {
+                        <tr>
+                            <td>@item.Product.Name</td>
+                            <td class="rightAlign">@item.Quantity <span>@item.Product.Unit.ShortForm</span></td>
+                            <td class="rightAlign">@item.UnitPrice</td>
+                            <td>@item.Price /-</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td class="rightAlign">In Words</td>
+                    <td id="amountInWords" class="rightAlign">@Model.UpdatedBy</td>
+                    <td class="rightAlign">Sub Total</td>
+                    <td class="rightAlign">@Model.SubTotal /-</td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="rightAlign">Discount</td>
+                    <td class="rightAlign">@Model.Discount %</td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="rightAlign">Grand Total</td>
+                    <td class="rightAlign" id="grandTotal">@Model.GrandTotal /-</td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="rightAlign">Paid Amount</td>
+                    <td class="rightAlign">@Model.PaidAmount /-</td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="rightAlign">Dues</td>
+                    <td class="rightAlign">@Model.Dues /-</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="col-md-1"></div>
+</div>

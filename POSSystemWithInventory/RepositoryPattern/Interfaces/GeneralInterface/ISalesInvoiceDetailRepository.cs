@@ -8,5 +8,6 @@ namespace POSSystemWithInventory.RepositoryPattern.Interfaces.GeneralInterface
 {
     public interface ISalesInvoiceDetailRepository: IBaseRepository<SalesInvoiceDetail>
     {
+        public IEnumerable<SalesInvoiceDetail> GetAllWithRelatedData(string invoiceNumber);
     }
 }

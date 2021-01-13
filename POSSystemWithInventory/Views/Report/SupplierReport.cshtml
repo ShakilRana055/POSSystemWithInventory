@@ -1,0 +1,123 @@
+﻿
+@{
+    ViewData["Title"] = "Supplier Report";
+    Layout = "~/Views/Shared/_POSLayout.cshtml";
+}
+
+<style>
+    .odd {
+        background-color: #b3ffff;
+    }
+
+    .even {
+        background-color: #b3b3ff;
+    }
+
+    .rightAlign {
+        text-align: right;
+    }
+
+    .centerAlign {
+        text-align: center;
+    }
+
+    #stockList tr td {
+        font-weight: bold;
+    }
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div id="headingOne" class="card-header bg-blue1">
+                <button type="button" data-toggle="collapse" data-target="#advanceSearchProductList" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
+                    <h5 class="m-0 p-0" style="color: #fff;">Supplier Report</h5>
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="advanceSearchProductList" class="collapse show">
+                    <div class="row table-responsive">
+                        <table class="table table-hover table-bordered" id="stockList">
+                            <thead style="background-color:coral;">
+                                <tr>
+                                    <th>Supplier Name</th>
+                                    <th>Total Purchase</th>
+                                    <th>Total Payable</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                            <tfoot style="background-color:coral;">
+                                <tr>
+                                    <td></td>
+                                    <td class="rightAlign" id="totalPrice"></td>
+                                    <td class="rightAlign" id="totalDues"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        (function () {
+
+            let selector = {
+                productList: $("#stockList"),
+                totalPrice: $("#totalPrice"),
+                totalDues: $("#totalDues"),
+            };
+
+            function GenerateBrandList() {
+                let totalPrice = 0;
+                let totalDues = 0;
+                var brandList = selector.productList.dataTable({
+                    "processing": true,
+                    "serverSide": true,
+                    "filter": true,
+                    "pageLength": 10,
+                    "autoWidth": false,
+                    "lengthMenu": [[10, 50, 100, 150, 200, 500], [10, 50, 100, 150, 200, 500]],
+                    "order": [[0, "desc"]],
+                    "ajax": {
+                        "url": "/Report/SupplierReportList/",
+                        "type": "POST",
+                        "data": function (data) {
+
+                        },
+                        "complete": function (json) {
+
+                        }
+                    },
+                    "columnDefs": [
+                        { "className": "centerAlign", "targets": [0] },
+                        { "className": "rightAlign", "targets": [1,2] },
+                    ],
+                    "columns": [
+                        { "data": "updatedBy", "name": "updatedBy", "autowidth": true, "orderable": true },
+                        { "data": "grandTotal", "name": "grandTotal", "autowidth": true, "orderable": true },
+                        {
+                            "render": function (data, row, full, meta) {
+                                totalPrice += full.grandTotal;
+                                totalDues += full.dues;
+                                selector.totalDues.text("= " + totalDues.toFixed(2));
+                                selector.totalPrice.text("= " + totalPrice.toFixed(2));
+                                return full.dues;
+                            }
+                        },
+                        
+
+                    ]
+                });
+
+            }
+
+            window.onload = function () {
+                GenerateBrandList();
+            }
+        })();
+    </script>
+}
+

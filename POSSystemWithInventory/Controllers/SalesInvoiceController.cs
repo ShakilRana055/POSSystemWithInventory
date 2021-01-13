@@ -52,6 +52,7 @@ namespace POSSystemWithInventory.Controllers
                     PaidAmount = salesInvoiceVM.PaidAmount,
                     Dues = salesInvoiceVM.Dues,
                     VatAndTaxId = salesInvoiceVM.VatAndTaxId,
+                    PaymentMode = salesInvoiceVM.PaymentMode,
                 };
                 context.SalesInvoice.Add(salesInvoice);
                 context.Save();
@@ -65,6 +66,7 @@ namespace POSSystemWithInventory.Controllers
                         ProductId = item.ProductId,
                         Quantity = item.Quantity,
                         UnitPrice = item.UnitPrice,
+                        Price  = item.Price,
                     };
                     DecrementIneventory(item.ProductId, item.Quantity);
                     context.SalesInvoiceDetail.Add(salesInvoiceDetail);
@@ -106,6 +108,61 @@ namespace POSSystemWithInventory.Controllers
         {
             var inventory = context.Inventory.GetAllWithRelatedData().ToList();
             return Json(inventory);
+        }
+        public IActionResult GetSalesInvoiceList()
+        {
+            var draw = Request.Form["draw"].FirstOrDefault();
+            var start = Request.Form["start"].FirstOrDefault();
+            var length = Request.Form["length"].FirstOrDefault();
+            var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
+            var sortColumnDir = Request.Form["order[0][dir]"].FirstOrDefault();
+            var searchValue = Request.Form["search[value]"].FirstOrDefault().ToLower();
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int skip = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
+
+            var salesInvoiceList = context.SalesInvoice.GetAllWithRelatedData();
+
+            #region Filtering table data
+            // searching 
+            if (searchValue != null)
+            {
+                try
+                {
+                    var filteredProductList = salesInvoiceList.Where(
+                        x => x.InvoiceNumber.ToLower().Contains(searchValue) ||
+                        x.CreatedDate.ToLower().Contains(searchValue) ||
+                        x.Customer.Name.ToLower().Contains(searchValue)
+                        ).ToList();
+                    salesInvoiceList = filteredProductList;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+
+            #endregion
+
+            var lists = salesInvoiceList.OrderByDescending(x => x.Id).ToList();
+
+            //total number of rows count     
+            recordsTotal = lists.Count();
+
+            //Paging     
+            var data = lists.Skip(skip).Take(pageSize).ToList();
+
+            //Returning Json Data    
+            return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
+        }
+        public IActionResult SalesInvoiceInformation(string search)
+        {
+            string invoiceNumber = search;
+            var salesInvoice = context.SalesInvoice.GetAllWithRelatedData(invoiceNumber);
+            salesInvoice.SalesInvoiceDetails = context.SalesInvoiceDetail.GetAllWithRelatedData(invoiceNumber).ToList();
+            salesInvoice.UpdatedBy = POSHelper.AmountInWords(salesInvoice.GrandTotal);
+            return PartialView("_SalesInvoiceInformation", salesInvoice);
         }
         #endregion
     }

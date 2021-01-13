@@ -1,0 +1,157 @@
+﻿
+@{
+    ViewData["Title"] = "Invoice List";
+    Layout = "~/Views/Shared/_POSLayout.cshtml";
+}
+
+<style>
+    .odd {
+        background-color: #b3ffff;
+    }
+
+    .even {
+        background-color: #b3b3ff;
+    }
+
+    #purchaseProductList tr, td {
+        text-align: center;
+    }
+
+    .rightAlign {
+        text-align: right;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div id="headingOne" class="card-header bg-blue1">
+                <button type="button" data-toggle="collapse" data-target="#advanceSearchPurchaseProductList" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
+                    <h5 class="m-0 p-0" style="color: #fff;">Product List</h5>
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="advanceSearchPurchaseProductList" class="collapse show">
+                    <div class="row table-responsive">
+                        <table class="table table-hover table-bordered" id="purchaseProductList">
+                            <thead>
+                                <tr style="background-color:coral;">
+                                    <th>Invoice</th>
+                                    <th>Customer Name</th>
+                                    <th>Grand Total</th>
+                                    <th>Paid Amount</th>
+                                    <th>Dues</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                            <tfoot>
+                                <tr style="background-color: coral;">
+                                    <td></td>
+                                    <td></td>
+                                    <td id="grandTotal" class="rightAlign"></td>
+                                    <td id="paidAmount" class="rightAlign"></td>
+                                    <td id="duesAmount" class="rightAlign"></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+    (function () {
+        let ajaxOperation = new AjaxOperation();
+        let modalOperation = new ModalOperation();
+
+        let selector = {
+            purchaseProductList: $("#purchaseProductList"),
+            grandTotal: $("#grandTotal"),
+            paidAmount: $("#paidAmount"),
+            duesAmount: $("#duesAmount"),
+        };
+        function GeneratePurchaseProductList() {
+            let grandTotal = 0;
+            let dues = 0;
+            let paidAmount = 0;
+            var purchaseProductList = selector.purchaseProductList.dataTable({
+                "processing": true,
+                "serverSide": true,
+                "filter": true,
+                "pageLength": 10,
+                "autoWidth": false,
+                "lengthMenu": [[10, 50, 100, 150, 200, 500], [10, 50, 100, 150, 200, 500]],
+                "order": [[0, "desc"]],
+                "ajax": {
+                    "url": "/SalesInvoice/GetSalesInvoiceList/",
+                    "type": "POST",
+                    "data": function (data) {
+
+                    },
+                    "complete": function (json) {
+
+                    }
+                },
+                "columnDefs": [
+                    { "className": "rightAlign", "targets": [ 2, 3, 4 ] },
+                ],
+                "columns": [
+                    { "data": "invoiceNumber", "name": "invoiceNumber", "autowidth": true, "orderable": true },
+                    { "data": "customer.name", "name": "customer.name", "autowidth": true, "orderable": true},
+                    { "data": "grandTotal", "name": "grandTotal", "autowidth": true, "orderable": true},
+                    { "data": "paidAmount", "name": "paidAmount", "autowidth": true, "orderable": true},
+                    { "data": "dues", "name": "dues", "autowidth": true, "orderable": true},
+                    { "data": "createdDate", "name": "createdDate", "autowidth": true, "orderable": true},
+                    {
+                        "render": function (data, type, full, meta) {
+                            grandTotal += full.grandTotal;
+                            dues += full.dues;
+                            paidAmount += full.paidAmount;
+
+                            selector.grandTotal.text("= " + grandTotal.toFixed(2));
+                            selector.paidAmount.text("= " + paidAmount.toFixed(2));
+                            selector.duesAmount.text("= " + dues.toFixed(2));
+
+                            return `
+                                <div class="btn-group">
+                                    <i class="fa fa-ellipsis-h" title = 'Actions' style = 'cursor:pointer;' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                                  <div class="dropdown-menu" >
+                                    <button style="font-size: inherit;" class="dropdown-item btn-rx viewSalesInvoiceList"  invoiceNumber = "${full.invoiceNumber}" ><i class="fa fa-info-circle" aria-hidden="true"></i>View</button >
+                                    </div>
+                                </div>`;
+                            //<a style="font-size: inherit;" class="dropdown-item btn-rx" href="#" ><i class="fa fa-check-circle" aria-hidden="true"></i>Edit</a >
+                            //    <button style="font-size: inherit;" class="dropdown-item btn-rx" invoiceNumber="${full.invoiceNumber}"  > <i class="fa fa-times" aria-hidden="true"></i>Delete</button >
+
+                        }
+                    },
+                ]
+            });
+
+            selector.tableInformation = purchaseProductList;
+        }
+        window.onload = function () {
+            GeneratePurchaseProductList();
+        }
+
+        $(document).on("click", ".viewSalesInvoiceList", function () {
+            let invoiceNumber = $(this).attr("invoiceNumber");
+            let htmlData = ajaxOperation.GetAjaxHtmlByValue("/SalesInvoice/SalesInvoiceInformation", invoiceNumber);
+
+            $("#modalHeading").text("Invoice Details");
+            modalOperation.ModalStatic("#informationModal");
+            modalOperation.ModalOpenWithHtml("#informationModal", "#informationModalDiv", htmlData);
+        });
+
+    })();
+    </script>
+}
+
