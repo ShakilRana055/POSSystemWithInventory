@@ -36,7 +36,7 @@ namespace POSSystemWithInventory.RepositoryPattern.Repositories.GeneralRepositor
         public Dictionary<string, decimal> PurchaseSummary(string startDate, string endDate)
         {
             DateTime newStartDate = Convert.ToDateTime(startDate);
-            DateTime newEndDate = Convert.ToDateTime(endDate);
+            DateTime newEndDate = Convert.ToDateTime(endDate).AddDays(1);
             var grandTotal = context.PurchaseProduct.ToList()
                 .Where(item => Convert.ToDateTime(item.CreatedDate) >= newStartDate && Convert.ToDateTime(item.CreatedDate) <= newEndDate)
                 .Sum(item => item.GrandTotal);
