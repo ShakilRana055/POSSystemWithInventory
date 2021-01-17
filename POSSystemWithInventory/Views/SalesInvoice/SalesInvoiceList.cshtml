@@ -78,6 +78,10 @@
             grandTotal: $("#grandTotal"),
             paidAmount: $("#paidAmount"),
             duesAmount: $("#duesAmount"),
+
+            printBtnSalesInvoiceReport: $("#printBtnSalesInvoiceReport"),
+            printSalesInvoiceReport: $("#printSalesInvoiceReport"),
+
         };
         function GeneratePurchaseProductList() {
             let grandTotal = 0;
@@ -149,6 +153,10 @@
             $("#modalHeading").text("Invoice Details");
             modalOperation.ModalStatic("#informationModal");
             modalOperation.ModalOpenWithHtml("#informationModal", "#informationModalDiv", htmlData);
+        });
+
+        $(document).on("click", "#printBtnSalesInvoiceReport", function () {
+            printDiv("printSalesInvoiceReport");
         });
 
     })();

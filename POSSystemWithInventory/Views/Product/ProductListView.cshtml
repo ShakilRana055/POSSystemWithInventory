@@ -15,7 +15,7 @@
 </style>
 
 <div class="row">
-    <div class="col-md-12">
+    @*<div class="col-md-12">
         <form id="" enctype="multipart/form-data">
             <div class="card">
                 <div id="headingOne" class="card-header bg-blue1">
@@ -56,7 +56,7 @@
                 </div>
             </div>
         </form>
-    </div>
+    </div>*@
 
     <div class="col-md-12">
         <div class="card">
@@ -97,8 +97,17 @@
             let selector = {
                 productList: $("#productList"),
                 tableInformation: '',
+                brandId: $("#BrandId"),
+                categoryId: $("#CategoryId"),
+                unitId: $("#UnitId"),
             };
-            
+
+            let search = {
+                brandId:0,
+                categoryId:0,
+                unitId:0,
+            }
+
             function GenerateBrandList() {
                 var brandList = selector.productList.dataTable({
                     "processing": true,
@@ -112,7 +121,10 @@
                         "url": "/Product/ProductList/",
                         "type": "POST",
                         "data": function (data) {
-
+                            categoryId = search.categoryId;
+                            brandId = search.brandId;
+                            unitId = search.unitId;
+                            console.log(search);
                         },
                         "complete": function (json) {
 
@@ -202,6 +214,19 @@
                 $("#modalHeading").text("Product Information");
                 modalOperation.ModalStatic("#informationModal");
                 modalOperation.ModalOpenWithHtml("#informationModal", "#informationModalDiv", htmlData);
+            });
+
+            selector.brandId.change(function () {
+                search.brandId = Number(selector.brandId.val());
+                selector.tableInformation.fnFilter();
+            });
+            selector.categoryId.change(function () {
+                search.categoryId = Number(selector.categoryId.val());
+                selector.tableInformation.fnFilter();
+            });
+            selector.unitId.change(function () {
+                search.unitId = Number(selector.unitId.val());
+                selector.tableInformation.fnFilter();
             });
 
         })();

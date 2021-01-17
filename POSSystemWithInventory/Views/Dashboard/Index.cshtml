@@ -1,8 +1,146 @@
 ﻿
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Dashboard";
     Layout = "~/Views/Shared/_POSLayout.cshtml";
 }
 
-<h2>Index</h2>
+<div class="row">
+    <div class="col-md-12">
+        <form id="barChart" enctype="multipart/form-data">
+            <div class="card">
+                <div id="headingOne" class="card-header bg-blue1">
+                    <button type="button" data-toggle="collapse" data-target="#Collapse" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
+                        <h5 class="m-0 p-0" style="color: #fff;">Bar Chart</h5>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="headingOne" class="collapse show">
+                        <div class="row">
+                            <canvas id="bar-chart-grouped" width="800" height="200"></canvas>
+                        </div>
+                    </div>
 
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div id="headingTwo" class="card-header bg-blue1">
+                <button type="button" data-toggle="collapse" data-target="#Collapse" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
+                    <h5 class="m-0 p-0" style="color: #fff;">Todays Purchase</h5>
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="headingTwo" class="collapse show">
+                    <div class="row">
+                        <h3 id="todayTotalPurchase"></h3>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div id="headingTwo" class="card-header bg-blue1">
+                <button type="button" data-toggle="collapse" data-target="#Collapse" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
+                    <h5 class="m-0 p-0" style="color: #fff;">Current Time</h5>
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="headingTwo" class="collapse show">
+                    <div class="row">
+                        <h3 id="dateTime"></h3>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div id="headingThree" class="card-header bg-blue1">
+                <button type="button" data-toggle="collapse" data-target="#Collapse" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
+                    <h5 class="m-0 p-0" style="color: #fff;">Todays Sales</h5>
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="headingThree" class="collapse show">
+                    <div class="row">
+                        <h3 id="todaysSale"></h3>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{ 
+    <script>
+       
+    </script>
+<script>
+    (function () {
+        let ajaxOperation = new AjaxOperation();
+        let selector = {
+            todayTotalPurchase: $("#todayTotalPurchase"),
+            todaysSale: $("#todaysSale"),
+            lables: [],
+            purchase: [],
+            sales:[],
+        }
+
+        function GenerateChart() {
+            new Chart(document.getElementById("bar-chart-grouped"), {
+                type: 'bar',
+                data: {
+                    labels: selector.lables,
+                    datasets: [
+                        {
+                            label: "Purchase",
+                            backgroundColor: "#00ff99",
+                            data: selector.purchase,
+                        }, {
+                            label: "Sales",
+                            backgroundColor: "#ff1a1a",
+                            data: selector.sales,
+                        }
+                    ]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'Purchase & Sales'
+                    }
+                }
+            });
+        }
+        function GatheringInformationForChart() {
+            let response = ajaxOperation.GetAjax("/Dashboard/InformationForChart");
+            selector.lables = response.days;
+            selector.purchase = response.purchase;
+            selector.sales = response.sales;
+        }
+        function ShowTime() {
+            var dt = new Date();
+            document.getElementById("dateTime")
+                .innerHTML = dt.toLocaleTimeString();
+        }  
+        
+        function TodayInformation() {
+            let response = ajaxOperation.GetAjax("/Dashboard/TodaysInformation");
+            selector.todayTotalPurchase.text("Total = " + response.todaysPurchase.toFixed(2) + "/-" );
+            selector.todaysSale.text("Total = " + response.todaysSales.toFixed(2) + "/-" );
+        }
+
+        window.onload = function () {
+            setInterval(ShowTime, 1000);
+            TodayInformation();
+            GatheringInformationForChart();
+            GenerateChart();
+        }
+    })();
+</script>
+}

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using POSSystemWithInventory.EntityModel;
+using POSSystemWithInventory.RepositoryPattern.Interfaces.IUnitOfWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -139,6 +140,20 @@ namespace POSSystemWithInventory.ConstantAndHelpers
                 text += " Point" + DecimalToText(decimalPart);
             }
             return text;
+        }
+
+        public static void UpdateUser(IUnitOfWork context)
+        {
+            var users = context.User.GetAll().ToList();
+            foreach (var item in users)
+            {
+                if(item.HasLogged == true)
+                {
+                    var user = context.User.Find(x => x.Id == item.Id).FirstOrDefault();
+                    user.HasLogged = false;
+                    context.Save();
+                }
+            }
         }
     }
 }

@@ -39,5 +39,34 @@ namespace POSSystemWithInventory.RepositoryPattern.Repositories.GeneralRepositor
                 .FirstOrDefault();
             return response;
         }
+        public Dictionary<string, decimal> SalesInvoiceSummary(string startDate, string endDate)
+        {
+            DateTime newStartDate = Convert.ToDateTime(startDate);
+            DateTime newEndDate = Convert.ToDateTime(endDate);
+            var grandTotal = context.SalesInvoice.ToList()
+                .Where(item => Convert.ToDateTime(item.CreatedDate) >= newStartDate && Convert.ToDateTime(item.CreatedDate) <= newEndDate)
+                .Sum(item => item.GrandTotal);
+            var duesAmount = context.SalesInvoice.ToList()
+                .Where(item => Convert.ToDateTime(item.CreatedDate) >= Convert.ToDateTime(startDate) && Convert.ToDateTime(item.CreatedDate) <= Convert.ToDateTime(endDate))
+                .Sum(item => item.Dues);
+            Dictionary<string, decimal> salesInvoiceSummary = new Dictionary<string, decimal>();
+            salesInvoiceSummary.Add("salesGrandTotal", grandTotal);
+            salesInvoiceSummary.Add("salesDuesAmount", duesAmount);
+            return salesInvoiceSummary;
+        }
+        public decimal TodaysSales()
+        {
+            var response = context.SalesInvoice.ToList()
+                           .Where(item => Convert.ToDateTime(item.CreatedDate).ToShortDateString() == DateTime.Now.ToShortDateString())
+                           .Sum(item => item.GrandTotal);
+            return response;
+        }
+        public decimal TodaysSales(string currentDate)
+        {
+            var grandTotal = context.SalesInvoice.ToList()
+                           .Where(item => Convert.ToDateTime(item.CreatedDate).ToShortDateString() == currentDate)
+                           .Sum(item => item.GrandTotal);
+            return grandTotal;
+        }
     }
 }

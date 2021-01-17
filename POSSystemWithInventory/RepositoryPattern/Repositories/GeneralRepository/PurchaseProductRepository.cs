@@ -33,5 +33,35 @@ namespace POSSystemWithInventory.RepositoryPattern.Repositories.GeneralRepositor
             var result = context.PurchaseProduct.Include(x => x.Supplier).Where(x => x.InvoiceNumber == invoiceNumber).FirstOrDefault();
             return result;
         }
+        public Dictionary<string, decimal> PurchaseSummary(string startDate, string endDate)
+        {
+            DateTime newStartDate = Convert.ToDateTime(startDate);
+            DateTime newEndDate = Convert.ToDateTime(endDate);
+            var grandTotal = context.PurchaseProduct.ToList()
+                .Where(item => Convert.ToDateTime(item.CreatedDate) >= newStartDate && Convert.ToDateTime(item.CreatedDate) <= newEndDate)
+                .Sum(item => item.GrandTotal);
+            var dues = context.PurchaseProduct.ToList()
+                .Where(item => Convert.ToDateTime(item.CreatedDate) >= newStartDate && Convert.ToDateTime(item.CreatedDate) <= newEndDate)
+                .Sum(item => item.Dues);
+            Dictionary<string, decimal> summary = new Dictionary<string, decimal>();
+            summary.Add("purchaseTotal", grandTotal);
+            summary.Add("purchaseDues", dues);
+            return summary;
+        }
+
+        public decimal TodaysPurchase()
+        {
+            var response = context.PurchaseProduct.ToList()
+                .Where(item => Convert.ToDateTime(item.CreatedDate).ToShortDateString() == DateTime.Now.ToShortDateString())
+                .Sum(item => item.GrandTotal);
+            return response;
+        }
+        public decimal TodaysPurchase(string currentDate)
+        {
+            var response = context.PurchaseProduct.ToList()
+                .Where(item => Convert.ToDateTime(item.CreatedDate).ToShortDateString() == currentDate)
+                .Sum(item => item.GrandTotal);
+            return response;
+        }
     }
 }

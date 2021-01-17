@@ -8,14 +8,18 @@
 </style>
 
 <div class="row">
-    <div class="col-md-1"></div>
-    <div class="col-md-10" style="background-color:ghostwhite;">
+    <div class="col-md-1">
+        <button class="btn btn-success btn-sm" id="printBtnSalesInvoiceReport">Print</button>
+    </div>
+    <div class="col-md-10" style="background-color:ghostwhite;" id="printSalesInvoiceReport">
         <table class="table table-borderless">
             <tr>
-                <td id="companyLogo" rowspan="2"></td>
+                <td id="companyLogo" rowspan="2" align="right">
+                    <img src="~/images/Company/logo.jpg" width="100" height="100" alt="No" />
+                </td>
                 <td style="text-align:center;">
-                    <h3 id="companyName" style="font-weight: 500;">Company Name</h3><br />
-                    <h6 id="companySlogan" style="margin-top: -21px;font-size: 10px;">Slogan</h6>
+                    <h3 id="companyName" style="font-weight: 500;">Hima Cosmetics</h3><br />
+                    <h6 id="companySlogan" style="margin-top: -21px;font-size: 10px;">Buy Cosmetics</h6>
                 </td>
                 <td width="20%"></td>
                 <td>
@@ -24,26 +28,26 @@
                 </td>
             </tr>
             <tr>
-                <td> <h6 style="font-size: 11px;margin-top: -20px;">Email: admin@gmail.com</h6></td>
+                <td> <h6 style="font-size: 11px; text-align:center; margin-top: -20px;">Email: admin@gmail.com</h6></td>
                 <td width="20%"></td>
                 <td>
                     <h6 id="date" style="font-size: 11px;margin-top: -20px;">Date: @Convert.ToDateTime(Model.CreatedDate).ToString("dd MMM yyyy")</h6>
                 </td>
             </tr>
             <tr>
-                <td class="rightAlign">Customer Name:</td>
+                <td style="text-align:right;">Customer Name:</td>
                 <td style="text-align:left;"><b>@Model.Customer.Name</b></td>
                 <td width="20%"></td>
                 <td></td>
             </tr>
             <tr>
-                <td class="rightAlign">Contact:</td>
+                <td style="text-align:right;">Contact:</td>
                 <td style="text-align:left;"><b>@Model.Customer.Phone</b> <br /><b>@Model.Customer.Email</b></td>
                 <td width="20%"></td>
                 <td></td>
             </tr>
             <tr>
-                <td class="rightAlign">Payment Mode:</td>
+                <td style="text-align:right;">Payment Mode:</td>
                 <td style="text-align:left;"><b>@Model.PaymentMode</b></td>
                 <td width="20%"></td>
                 <td></td>
@@ -64,35 +68,35 @@
                     {
                         <tr>
                             <td>@item.Product.Name</td>
-                            <td class="rightAlign">@item.Quantity <span>@item.Product.Unit.ShortForm</span></td>
-                            <td class="rightAlign">@item.UnitPrice</td>
-                            <td>@item.Price /-</td>
+                            <td style="text-align:right;">@item.Quantity <span>@item.Product.Unit.ShortForm</span></td>
+                            <td style="text-align:right;">@item.UnitPrice</td>
+                            <td style="text-align:right;">@item.Price /-</td>
                         </tr>
                     }
                 }
             </tbody>
             <tfoot>
                 <tr>
-                    <td class="rightAlign">In Words</td>
-                    <td id="amountInWords" class="rightAlign">@Model.UpdatedBy</td>
-                    <td class="rightAlign">Sub Total</td>
-                    <td class="rightAlign">@Model.SubTotal /-</td>
+                    <td style="text-align:right;">In Words</td>
+                    <td id="amountInWords" style="text-align:right;">@Model.UpdatedBy</td>
+                    <td style="text-align:right;">Sub Total</td>
+                    <td style="text-align:right;">@Model.SubTotal /-</td>
                 </tr>
                 <tr>
-                    <td colspan="3" class="rightAlign">Discount</td>
-                    <td class="rightAlign">@Model.Discount %</td>
+                    <td colspan="3" style="text-align:right;">Discount</td>
+                    <td style="text-align:right;">@Model.Discount %</td>
                 </tr>
                 <tr>
-                    <td colspan="3" class="rightAlign">Grand Total</td>
-                    <td class="rightAlign" id="grandTotal">@Model.GrandTotal /-</td>
+                    <td colspan="3" style="text-align:right;">Grand Total</td>
+                    <td style="text-align:right;" id="grandTotal">@Model.GrandTotal /-</td>
                 </tr>
                 <tr>
-                    <td colspan="3" class="rightAlign">Paid Amount</td>
-                    <td class="rightAlign">@Model.PaidAmount /-</td>
+                    <td colspan="3" style="text-align:right;">Paid Amount</td>
+                    <td style="text-align:right;">@Model.PaidAmount /-</td>
                 </tr>
                 <tr>
-                    <td colspan="3" class="rightAlign">Dues</td>
-                    <td class="rightAlign">@Model.Dues /-</td>
+                    <td colspan="3" style="text-align:right;">Dues</td>
+                    <td style="text-align:right;">@Model.Dues /-</td>
                 </tr>
             </tfoot>
         </table>

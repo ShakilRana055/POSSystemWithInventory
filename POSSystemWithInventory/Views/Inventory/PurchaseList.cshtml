@@ -76,6 +76,7 @@
             grandTotal: $("#grandTotal"),
             paidAmount: $("#paidAmount"),
             duesAmount: $("#duesAmount"),
+            purchaseBtnInformationReport: $("#purchaseBtnInformationReport"),
         };
         function GeneratePurchaseProductList() {
             let grandTotal = 0;
@@ -124,11 +125,13 @@
                                     <i class="fa fa-ellipsis-h" title = 'Actions' style = 'cursor:pointer;' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
                                   <div class="dropdown-menu" >
                                     <button style="font-size: inherit;" class="dropdown-item btn-rx viewPurchaseProductList"  invoiceNumber = "${full.invoiceNumber}" ><i class="fa fa-info-circle" aria-hidden="true"></i>View</button >
-                                    <a style="font-size: inherit;" class="dropdown-item btn-rx" href = "#" ><i class="fa fa-check-circle" aria-hidden="true"></i>Edit</a >
-                                    <button style="font-size: inherit;" class="dropdown-item btn-rx"  invoiceNumber = "${full.invoiceNumber}"  > <i class="fa fa-times" aria-hidden="true"></i>Delete</button >
                                   </div>
                                 </div>`;
+
                             ///Product/ProductEditView ? search = ${ full.id }
+                            //<a style="font-size: inherit;" class="dropdown-item btn-rx" href="#" ><i class="fa fa-check-circle" aria-hidden="true"></i>Edit</a >
+                            //    <button style="font-size: inherit;" class="dropdown-item btn-rx" invoiceNumber="${full.invoiceNumber}"  > <i class="fa fa-times" aria-hidden="true"></i>Delete</button >
+
                         }
                     },
                 ]
@@ -148,7 +151,9 @@
             modalOperation.ModalStatic("#informationModal");
             modalOperation.ModalOpenWithHtml("#informationModal", "#informationModalDiv", htmlData);
         });
-
+        $(document).on("click", "#purchaseBtnInformationReport", function () {
+            printDiv("purchaseInformationReport");
+        })
     })();
 </script>
 }

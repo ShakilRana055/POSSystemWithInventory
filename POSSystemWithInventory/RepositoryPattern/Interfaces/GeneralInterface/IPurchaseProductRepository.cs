@@ -11,5 +11,8 @@ namespace POSSystemWithInventory.RepositoryPattern.Interfaces.GeneralInterface
         public PurchaseProduct GetLastOrDefault();
         public IEnumerable<PurchaseProduct> GetAllWithRelatedData();
         public PurchaseProduct GetAllWithRelatedData(string invoiceNumber);
+        public Dictionary<string, decimal> PurchaseSummary(string startDate, string endDate);
+        public decimal TodaysPurchase();
+        public decimal TodaysPurchase(string currentDate);
     }
 }

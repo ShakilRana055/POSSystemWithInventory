@@ -134,6 +134,10 @@ namespace POSSystemWithInventory.Controllers
             var sortColumnDir = Request.Form["order[0][dir]"].FirstOrDefault();
             var searchValue = Request.Form["search[value]"].FirstOrDefault().ToLower();
 
+            int brandId = Convert.ToInt32( Request.Form["brandId"].FirstOrDefault());
+            int categoryId = Convert.ToInt32(Request.Form["categoryId"].FirstOrDefault());
+            int unitId = Convert.ToInt32(Request.Form["unitId"].FirstOrDefault());
+
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
@@ -159,6 +163,24 @@ namespace POSSystemWithInventory.Controllers
                 catch (Exception ex)
                 {
                     throw ex;
+                }
+            }
+
+            //Filtering
+
+            if(brandId != 0 || categoryId != 0 || unitId != 0)
+            {
+                if(brandId != 0)
+                {
+                    productList = productList.Where(x => x.BrandId == brandId).ToList();
+                }
+                if (categoryId != 0)
+                {
+                    productList = productList.Where(x => x.CategoryId == categoryId).ToList();
+                }
+                if (unitId != 0)
+                {
+                    productList = productList.Where(x => x.UnitId == unitId).ToList();
                 }
             }
 

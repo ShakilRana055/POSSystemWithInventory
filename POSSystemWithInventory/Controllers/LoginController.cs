@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using POSSystemWithInventory.ConstantAndHelpers;
 using POSSystemWithInventory.EntityModel;
 using POSSystemWithInventory.Models;
 using POSSystemWithInventory.RepositoryPattern.Interfaces.IUnitOfWork;
@@ -40,6 +41,10 @@ namespace POSSystemWithInventory.Controllers
             {
                 CreateUser();
             }
+            if(getUser.Count > 0)
+            {
+                POSHelper.UpdateUser(context);
+            }
             UserLoginVM userLoginVM = new UserLoginVM();
             return View(userLoginVM);
         }
@@ -66,6 +71,15 @@ namespace POSSystemWithInventory.Controllers
                 userLoginVM.ErrorMessage = "Username or Password is incorrect";
                 return View(userLoginVM);
             }
+        }
+        public IActionResult GetLoggedInformation()
+        {
+            var user = context.User.Find(item => item.HasLogged == true).FirstOrDefault();
+            return Json(user);
+        }
+        public IActionResult LogOut()
+        {
+            return RedirectToAction("Index");
         }
     }
 }

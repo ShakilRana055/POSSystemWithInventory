@@ -11,5 +11,8 @@ namespace POSSystemWithInventory.RepositoryPattern.Interfaces.GeneralInterface
         public SalesInvoice GetLastOrDefault();
         public IEnumerable<SalesInvoice> GetAllWithRelatedData();
         public SalesInvoice GetAllWithRelatedData(string invoiceNumber);
+        public Dictionary<string , decimal> SalesInvoiceSummary(string startDate, string endDate);
+        public decimal TodaysSales();
+        public decimal TodaysSales(string currentDate);
     }
 }

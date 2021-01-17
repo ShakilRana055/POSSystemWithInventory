@@ -8,5 +8,6 @@ namespace POSSystemWithInventory.RepositoryPattern.Interfaces.GeneralInterface
 {
     public interface ICustomerRepository: IBaseRepository<Customer>
     {
+        public List<SalesInvoice> CustomerReport();
     }
 }

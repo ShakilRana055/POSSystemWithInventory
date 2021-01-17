@@ -9,7 +9,7 @@ namespace POSSystemWithInventory.EntityModel
     {
         public BaseClass()
         {
-            CreatedDate = DateTime.Now.ToShortDateString();
+            CreatedDate = DateTime.Now.ToString();
             IsActive = true;
             IsDeleted = false;
             IsUpdated = false;

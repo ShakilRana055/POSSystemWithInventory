@@ -33,26 +33,30 @@
             </div>
             <div class="card-body">
                 <div id="advanceSearchProductList" class="collapse show">
-                    <div class="row table-responsive">
-                        <table class="table table-hover table-bordered" id="stockList">
-                            <thead style="background-color:coral;">
-                                <tr>
-                                    <th>Product Name</th>
-                                    <th>Quantity</th>
-                                    <th>Warning Quantity</th>
-                                    <th>Price</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                            </tbody>
-                            <tfoot style="background-color:coral;">
-                                <tr>
-                                    <td colspan="3" class="rightAlign">total</td>
-                                    <td class="rightAlign" id="totalPrice"></td>
-                                </tr>
-                            </tfoot>
-                        </table>
+                    <div class="row">
+                        <button class="btn btn-success btn-sm" id="printBtnStockReport">Print</button>
+                    </div>
+                    <div class="row">
+                        <div class="table-responsive" id="printStockReport">
+                            <table class="table table-hover table-bordered" id="stockList">
+                                <thead style="background-color:coral;">
+                                    <tr>
+                                        <th>Product Name</th>
+                                        <th>Quantity</th>
+                                        <th>Warning Quantity</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                                <tfoot style="background-color:coral;">
+                                    <tr>
+                                        <td colspan="3" class="rightAlign">total</td>
+                                        <td class="rightAlign" id="totalPrice"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -66,6 +70,7 @@
             let selector = {
                 productList: $("#stockList"),
                 totalPrice: $("#totalPrice"),
+                printBtnStockReport: $("#printBtnStockReport"),
             };
 
             function GenerateBrandList() {
@@ -113,6 +118,9 @@
             window.onload = function () {
                 GenerateBrandList();
             }
+            selector.printBtnStockReport.click(function () {
+                printDiv("printStockReport");
+            })
         })();
     </script>
 }

@@ -101,6 +101,20 @@ class AjaxOperation {
         });
         return getAjaxHtmlByValue;
     }
+    GetAjaxHtmlByJson(destination, jsonData) {
+        let getAjaxHtmlByValue;
+        $.ajax({
+            url: destination,
+            method: "GET",
+            data: jsonData,
+            dataType: "html",
+            async: false,
+            success: function (response) {
+                getAjaxHtmlByValue = response;
+            }
+        });
+        return getAjaxHtmlByValue;
+    }
 }
 
 
