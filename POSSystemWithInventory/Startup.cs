@@ -28,8 +28,8 @@ namespace POSSystemWithInventory
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            string connectionString = "Server = SHAKILRANA; Database = POSWithInventory; Trusted_Connection=true;MultipleActiveResultSets=true";
-            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+
+            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IImageProcessing, ImageProcessing>();
         }
