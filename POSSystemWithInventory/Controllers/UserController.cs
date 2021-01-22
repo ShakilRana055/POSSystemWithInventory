@@ -375,6 +375,11 @@ namespace POSSystemWithInventory.Controllers
             };
             return PartialView("_CustomerInformation", customerVM);
         }
+        public IActionResult GetBonusPoint()
+        {
+            var response = context.Customer.GetAll().ToList();
+            return Json(response);
+        }
         #endregion
 
         #region AdminLogin

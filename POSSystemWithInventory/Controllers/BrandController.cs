@@ -162,5 +162,10 @@ namespace POSSystemWithInventory.Controllers
             //Returning Json Data    
             return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
         }
+        public IActionResult GetDuplicate()
+        {
+            var result = context.Brand.GetAll().ToList();
+            return Json(result);
+        }
     }
 }

@@ -103,7 +103,9 @@
                 brandResetBtn: $("#brandResetBtn"),
                 tableInformation: '',
                 globalId: '',
+                duplicateStorage: [],
             };
+
             let validator = selector.brandCreateForm.validate({
                 // Specify validation rules
                 rules: {
@@ -169,21 +171,31 @@
                 });
                 selector.tableInformation = brandList;
             }
-
+            function GetDuplicate() {
+                selector.duplicateStorage = ajaxOperation.GetAjax("/Brand/GetDuplicate/");
+                console.log(selector.duplicateStorage);
+            }
             function ShowEditInformation(name, code, description){
                 selector.name.val(name);
                 selector.code.val(code);
                 selector.description.val(description);
             }
 
+            function DuplicateCheck(name, code) {
+                let index = selector.duplicateStorage.findIndex(item => item.name.toUpperCase() === name.toUpperCase() && item.code.toUpperCase() === code.toUpperCase());
+                return index === - 1 ? true : false;
+            }
+
             selector.brandCreateBtn.click(function () {
-                if($(this).text() === "Save"){
-                    if (selector.brandCreateForm.valid()) {
+                let duplicateCheck = DuplicateCheck(selector.name.val(), selector.code.val());
+                if ($(this).text() === "Save") {
+                    if (selector.brandCreateForm.valid() && duplicateCheck === true) {
                         let formData = new FormData(selector.brandCreateForm[0]);
                         let photo = selector.photo.get(0);
                         formData.append('Photo', photo.files);
 
                         let data = ajaxOperation.SaveAjax("/Brand/Index", formData);
+
                         if (data === true) {
                             selector.tableInformation.fnFilter();
                             selector.brandCreateForm[0].reset();
@@ -192,6 +204,9 @@
                         else {
                             toastr.error('Something went wrong!', 'error');
                         }
+                    }
+                    else if (duplicateCheck === false) {
+                        toastr.error("Duplicate Entry Not Allowed!", "Error");
                     }
                     else {
                         toastr.error('Please fill up the form with valid information.', 'Validation Failed!');
@@ -217,6 +232,7 @@
 
             window.onload = function () {
                 GenerateBrandList();
+                GetDuplicate();
             }
 
             selector.brandResetBtn.click(function () {
@@ -258,6 +274,26 @@
                         }
                     }
                 });
+            });
+
+            selector.name.keyup(function () {
+                let text = $(this).val();
+                if (text.length > 0 && text.length <= 3 && text != null) {
+                    text = text.toUpperCase();
+                    text = text + "-00001";
+                }
+                else if (text.length > 3) {
+                    let newText = "";
+                    for (let i = 0; i < 3; i++) {
+                        newText += text[i];
+                    }
+                    text = newText.toUpperCase();
+                    text = text + "-00001";
+                }
+                else {
+                    text = "";
+                }
+                selector.code.val(text);
             });
 
         })();

@@ -139,5 +139,11 @@ namespace POSSystemWithInventory.Controllers
             return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
         }
         #endregion
+
+        public IActionResult GetDuplicate()
+        {
+            var response = context.Category.GetAll().ToList();
+            return Json(response);
+        }
     }
 }

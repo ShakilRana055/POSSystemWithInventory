@@ -33,6 +33,7 @@ namespace POSSystemWithInventory.Models
         public decimal Dues { get; set; }
         public string PaymentMode { get; set; }
         public int? VatAndTaxId { get; set; }
+        public bool IsBonusPointTaken { get; set; }
         public SalesInvoiceDetailVM SalesInvoiceDetail { get; set; }
         public List<SalesInvoiceDetailVM> SalesInvoiceDetails { get; set; }
 

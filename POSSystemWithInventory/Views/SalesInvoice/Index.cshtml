@@ -6,26 +6,6 @@
 
 <style>
 
-    /*#salesInvoiceTable th, td:nth-child(1) {
-        width: 15% !important;
-    }
-
-    #salesInvoiceTable th, td:nth-child(2) {
-        width: 14% !important;
-    }
-
-    #salesInvoiceTable th, td:nth-child(3) {
-        width: 14% !important;
-    }
-
-    #salesInvoiceTable th, td:nth-child(4) {
-        width: 17% !important;
-    }
-
-    #salesInvoiceTable th, td:nth-child(5) {
-        width: 14% !important;
-    }*/
-
     #salesInvoiceTable tbody, tr:nth-child(2n+1) {
         background-color: #ccffcc;
     }
@@ -119,7 +99,9 @@
                                     <tr style="font-weight: 900;color: black;">
                                         <td colspan="3" align="right">Grand total</td>
                                         <td id="grandTotal" align="right"></td>
-                                        <td></td>
+                                        <td align="center">
+                                            <input type="checkbox" id="bonusPoint"> Use Bonus Point
+                                        </td>
                                     </tr>
                                     <tr style="font-weight: 900;color: black;">
                                         <td colspan="3" align="right">Paid Amount</td>
@@ -172,6 +154,7 @@
             paidAmount: $("#paidAmount"),
             dues: $("#dues"),
             paymentMode: $("#paymentMode"),
+            bonusPoint: $("#bonusPoint"),
 
 
             productInfo: ".productInfo",
@@ -186,6 +169,7 @@
 
             productStorage: [],
             inventoryStorage: [],
+            bonusPointStorage: [],
             serialNumber: 1,
             rowId : 1,
         };
@@ -199,7 +183,9 @@
             GetAvailableQuantity() {
                 selector.inventoryStorage = ajaxOperation.GetAjax("SalesInvoice/GetInventory");
             }
-
+            GetCustomerBonusPoint() {
+                selector.bonusPointStorage = ajaxOperation.GetAjax("User/GetBonusPoint");
+            }
         }
         class SalesInvoiceDetail {
             constructor(InvoiceNumber, ProductId, Quantity, UnitPrice, Price) {
@@ -362,6 +348,7 @@
                     Dues: selector.dues.text(),
                     PaymentMode: selector.paymentMode.val(),
                     VatAndTaxId: selector.vatAndTaxId.val(),
+                    IsBonusPointTaken: selector.bonusPoint.is(":checked") ? true : false,
                     SalesInvoiceDetails: this.IterateOverRow(),
                 }
                 return jsonData;
@@ -374,12 +361,18 @@
                 selector.productStorage = [];
                 
             }
+            BonusPoint() {
+                let customerId = selector.customerId.val();
+                let item = selector.bonusPointStorage.find(x => x.id === Number(customerId));
+                return item.bonusPoint;
+            }
         }
         let onloadProcess = new OnloadProcess();
         let process = new Process();
         window.onload = function () {
             onloadProcess.GetInvoiceNumber();
             onloadProcess.GetAvailableQuantity();
+            onloadProcess.GetCustomerBonusPoint();
         }
 
         selector.salesInvoiceAddBtn.click(function () {
@@ -493,22 +486,40 @@
         });
 
         selector.salesInvoiceCreateBtn.click(function () {
-            let jsonData = process.MakeJsonData();
-            let response = ajaxOperation.SavePostAjax("/SalesInvoice/Index", jsonData);
-            if (response) {
-                toastr.success("Successfully Saved!", "Success");
-                onloadProcess.GetInvoiceNumber();
-                onloadProcess.GetAvailableQuantity();
-                process.ResetAll();
+            if (selector.salesInvoiceTBody.find("tr").length > 0) {
+                let jsonData = process.MakeJsonData();
+                let response = ajaxOperation.SavePostAjax("/SalesInvoice/Index", jsonData);
+                if (response) {
+                    toastr.success("Successfully Saved!", "Success");
+                    onloadProcess.GetInvoiceNumber();
+                    onloadProcess.GetAvailableQuantity();
+                    process.ResetAll();
+                }
+                else {
+                    toastr.error("Something went wrong!", "Error");
+                }
             }
             else {
-                toastr.error("Something went wrong!", "Error");
+                toastr.error("No Invoice Found", "Error");
             }
+            
         });
 
         selector.salesInvoiceResetBtn.click(function () {
             process.ResetAll();
         })
+
+        selector.bonusPoint.change(function () {
+            if ($(this).is(":checked")) {
+                let bonusPoint = process.BonusPoint();
+                let grandTotal = (selector.grandTotal.text() - bonusPoint).toFixed(2)
+                selector.grandTotal.text(grandTotal);
+                selector.paidAmount.val(grandTotal);
+            }
+            else {
+                process.MultipleTask();
+            }
+        });
 
     })();
 </script>

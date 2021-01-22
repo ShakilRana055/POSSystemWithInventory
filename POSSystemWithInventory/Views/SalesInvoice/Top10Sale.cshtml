@@ -1,0 +1,61 @@
+﻿@{
+    ViewData["Title"] = "Top 10 Sale";
+    Layout = "~/Views/Shared/_POSLayout.cshtml";
+    var dictionary = ViewBag.top10Sales;
+}
+
+<style>
+    .odd {
+        background-color: #b3ffff;
+    }
+
+    .even {
+        background-color: #b3b3ff;
+    }
+</style>
+@*<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div id="headingTwo" class="card-header bg-blue1">
+                <button type="button" data-toggle="collapse" data-target="#Collapse" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
+                    <h5 class="m-0 p-0" style="color: #fff;">Top 10 Sales</h5>
+                </button>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-hover table-bordered" id="brandList">
+                    <thead style="background-color: #ffd9b3;">
+                        <tr>
+                            <th>Name</th>
+                            <th>Image</th>
+                            <th>Times</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int count = 0;
+                            foreach (var item in dictionary)
+                            {
+                                string className = count % 2 == 0 ? "even" : "odd";
+                                <tr class=@className>
+                                    <td>
+                                        @item.key.Product.Name
+                                    </td>
+                                    <td>
+                                        <img src="@item.key.Product.PhotoUrl" width="150" height="150" title="@item.key.Product.Name" alt="No image" />
+                                    </td>
+                                    <td>
+                                        @item.Value
+                                    </td>
+                                </tr>
+
+                                count++;
+                             }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>*@
+
+

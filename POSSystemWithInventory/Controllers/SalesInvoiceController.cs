@@ -37,19 +37,34 @@ namespace POSSystemWithInventory.Controllers
             return View();
         }
 
+        public IActionResult Top10Sale()
+        {
+            //ViewBag.top10Sales = context.SalesInvoiceDetail.Top10Sales();
+            return View();
+        }
+
         [HttpPost]
         public IActionResult Index(SalesInvoiceVM salesInvoiceVM)
         {
             try
             {
+                #region Sales invoice
+                var customer = context.Customer.Find(item => item.Id == salesInvoiceVM.CustomerId).FirstOrDefault();
+                decimal grandTotal = salesInvoiceVM.GrandTotal;
+                decimal paidAmount = salesInvoiceVM.PaidAmount;
+                if (salesInvoiceVM.IsBonusPointTaken)
+                {
+                    grandTotal += customer.BonusPoint;
+                    paidAmount += customer.BonusPoint;
+                }
                 SalesInvoice salesInvoice = new SalesInvoice()
                 {
                     InvoiceNumber = salesInvoiceVM.InvoiceNumber,
                     CustomerId = salesInvoiceVM.CustomerId,
                     SubTotal = salesInvoiceVM.SubTotal,
                     Discount = salesInvoiceVM.Discount,
-                    GrandTotal = salesInvoiceVM.GrandTotal,
-                    PaidAmount = salesInvoiceVM.PaidAmount,
+                    GrandTotal = grandTotal,
+                    PaidAmount = paidAmount,
                     Dues = salesInvoiceVM.Dues,
                     VatAndTaxId = salesInvoiceVM.VatAndTaxId,
                     PaymentMode = salesInvoiceVM.PaymentMode,
@@ -72,7 +87,25 @@ namespace POSSystemWithInventory.Controllers
                     context.SalesInvoiceDetail.Add(salesInvoiceDetail);
                     context.Save();
                 }
-                
+                #endregion
+
+                #region Bonus Point Section
+                if (salesInvoiceVM.IsBonusPointTaken)
+                {
+                    if (customer != null)
+                    {
+                        customer.BonusPoint = 0;
+                        context.Save();
+                    }
+                }
+                decimal bonusPoint = (salesInvoice.SubTotal / 100);
+                if(customer != null && customer.Name != "Walk in Customer")
+                {
+                    customer.BonusPoint = customer.BonusPoint + bonusPoint;
+                    context.Save();
+                }
+                #endregion
+
                 return Json(true);
             }
             catch (Exception ex)
@@ -81,6 +114,7 @@ namespace POSSystemWithInventory.Controllers
                 throw ex;
             }
         }
+
         #region Actions and Helpers
 
         private void DecrementIneventory(int? productId, decimal quantity)

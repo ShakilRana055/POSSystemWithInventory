@@ -95,6 +95,7 @@
                 categoryResetBtn: $("#categoryResetBtn"),
                 tableInformation: '',
                 globalId: '',
+                duplicateStorage: [],
             };
             let validator = selector.categoryCreateForm.validate({
                 // Specify validation rules
@@ -156,7 +157,10 @@
                 });
                 selector.tableInformation = brandList;
             }
-
+            function DuplicateCheck(name, code) {
+                let index = selector.duplicateStorage.findIndex(item => item.name.toUpperCase() === name.toUpperCase() && item.code.toUpperCase() === code.toUpperCase());
+                return index === - 1 ? true : false;
+            }
             function ShowEditInformation(name, code, description){
                 selector.name.val(name);
                 selector.code.val(code);
@@ -164,8 +168,9 @@
             }
 
             selector.categoryCreateBtn.click(function () {
-                if($(this).text() === "Save"){
-                    if (selector.categoryCreateForm.valid()) {
+                let duplicateCheck = DuplicateCheck(selector.name.val(), selector.code.val());
+                if ($(this).text() === "Save") {
+                    if (selector.categoryCreateForm.valid() && duplicateCheck) {
                         let formData = new FormData(selector.categoryCreateForm[0]);
                         let data = ajaxOperation.SaveAjax("/Category/Index", formData);
                         if (data === true) {
@@ -176,6 +181,9 @@
                         else {
                             toastr.error('Something went wrong!', 'error');
                         }
+                    }
+                    else if (duplicateCheck === false) {
+                        toastr.error("Duplicate Entry Not Allowed!", "Error");
                     }
                     else {
                         toastr.error('Please fill up the form with valid information.', 'Validation Failed!');
@@ -196,9 +204,12 @@
                     }
                 }
             });
-
+            function GetDuplicate() {
+                selector.duplicateStorage = ajaxOperation.GetAjax("/Category/GetDuplicate");
+            }
             window.onload = function () {
                 GenerateCategoryList();
+                GetDuplicate();
             }
 
             selector.categoryResetBtn.click(function () {
@@ -240,6 +251,26 @@
                         }
                     }
                 });
+            });
+
+            selector.name.keyup(function () {
+                let text = $(this).val();
+                if (text.length > 0 && text.length <= 3 && text != null) {
+                    text = text.toUpperCase();
+                    text = text + "-00001";
+                }
+                else if (text.length > 3) {
+                    let newText = "";
+                    for (let i = 0; i < 3; i++) {
+                        newText += text[i];
+                    }
+                    text = newText.toUpperCase();
+                    text = text + "-00001";
+                }
+                else {
+                    text = "";
+                }
+                selector.code.val(text);
             });
         })();
     </script>
