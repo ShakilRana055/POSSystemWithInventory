@@ -63,5 +63,13 @@ namespace POSSystemWithInventory.RepositoryPattern.Repositories.GeneralRepositor
                 .Sum(item => item.GrandTotal);
             return response;
         }
+        public IEnumerable<PurchaseProduct> GetRelatedDataWithDate(DateTime startDate, DateTime endDate)
+        {
+            endDate = endDate.AddDays(1);
+            var response = context.PurchaseProduct.Include(item => item.Supplier).ToList()
+                            .Where(x => Convert.ToDateTime(x.CreatedDate) >= startDate && Convert.ToDateTime(x.CreatedDate) <= endDate)
+                            .ToList();
+            return response;
+        }
     }
 }

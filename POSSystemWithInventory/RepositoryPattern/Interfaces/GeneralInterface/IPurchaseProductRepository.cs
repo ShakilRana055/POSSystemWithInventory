@@ -14,5 +14,6 @@ namespace POSSystemWithInventory.RepositoryPattern.Interfaces.GeneralInterface
         public Dictionary<string, decimal> PurchaseSummary(string startDate, string endDate);
         public decimal TodaysPurchase();
         public decimal TodaysPurchase(string currentDate);
+        public IEnumerable<PurchaseProduct> GetRelatedDataWithDate(DateTime startDate, DateTime endDate);
     }
 }

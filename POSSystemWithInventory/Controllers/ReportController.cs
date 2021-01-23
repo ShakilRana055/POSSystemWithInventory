@@ -193,5 +193,104 @@ namespace POSSystemWithInventory.Controllers
         }
         #endregion
 
+        [HttpPost]
+        public IActionResult PurchaseListInRange()
+        {
+            var draw = Request.Form["draw"].FirstOrDefault();
+            var start = Request.Form["start"].FirstOrDefault();
+            var length = Request.Form["length"].FirstOrDefault();
+            var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
+            var sortColumnDir = Request.Form["order[0][dir]"].FirstOrDefault();
+            var searchValue = Request.Form["search[value]"].FirstOrDefault().ToLower();
+            var startDate = Convert.ToDateTime(Request.Form["startDate"].FirstOrDefault());
+            var endDate = Convert.ToDateTime(Request.Form["endDate"].FirstOrDefault());
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int skip = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
+
+            var purchaseList = context.PurchaseProduct.GetRelatedDataWithDate(startDate, endDate);
+            #region Filtering table data
+            // searching 
+            if (searchValue != null)
+            {
+                try
+                {
+                    var filterBrandList = purchaseList.Where(
+                        x => x.Supplier.Name.ToLower().Contains(searchValue) ||
+                        x.InvoiceNumber.ToLower().Contains(searchValue)||
+                        x.CreatedDate.ToLower().Contains(searchValue)
+                        ).ToList();
+                    purchaseList = filterBrandList;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+
+            #endregion
+
+            var lists = purchaseList.OrderByDescending(x => x.Id).ToList();
+
+            //total number of rows count     
+            recordsTotal = lists.Count();
+
+            //Paging     
+            var data = lists.Skip(skip).Take(pageSize).ToList();
+
+            //Returning Json Data    
+            return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
+        }
+
+        [HttpPost]
+        public IActionResult SalesListInRange()
+        {
+            var draw = Request.Form["draw"].FirstOrDefault();
+            var start = Request.Form["start"].FirstOrDefault();
+            var length = Request.Form["length"].FirstOrDefault();
+            var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
+            var sortColumnDir = Request.Form["order[0][dir]"].FirstOrDefault();
+            var searchValue = Request.Form["search[value]"].FirstOrDefault().ToLower();
+            var startDate = Convert.ToDateTime(Request.Form["startDate"].FirstOrDefault());
+            var endDate = Convert.ToDateTime(Request.Form["endDate"].FirstOrDefault());
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int skip = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
+
+            var salesList = context.SalesInvoice.GetRelatedDataWithDate(startDate, endDate);
+            #region Filtering table data
+            // searching 
+            if (searchValue != null)
+            {
+                try
+                {
+                    var filterBrandList = salesList.Where(
+                        x => x.Customer.Name.ToLower().Contains(searchValue) ||
+                        x.InvoiceNumber.ToLower().Contains(searchValue) ||
+                        x.CreatedDate.ToLower().Contains(searchValue)
+                        ).ToList();
+                    salesList = filterBrandList;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+
+            #endregion
+
+            var lists = salesList.OrderByDescending(x => x.Id).ToList();
+
+            //total number of rows count     
+            recordsTotal = lists.Count();
+
+            //Paging     
+            var data = lists.Skip(skip).Take(pageSize).ToList();
+
+            //Returning Json Data    
+            return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
+        }
     }
 }

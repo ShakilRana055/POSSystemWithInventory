@@ -16,78 +16,135 @@
 @{
     decimal netPayable = Model.AccountPayable + Model.TotalPurchaseAmount;
     decimal netReceivable = Model.AccountReceivable + Model.TotalSalesAmount;
- }
-<div class="row">
-    <div class="col-md-1">
-    <div class="row">
-        <button class="btn btn-success btn-sm" id="printBtnIncomeStatement">Print</button>
+}
+
+<ul class="nav nav-tabs">
+    <li class="active">
+        <a href="#reportBtnIncome" id="firstIncomeBtn" class="btn btn-outline-light btn-sm" data-toggle="tab">
+            Report
+        </a>
+    </li>
+    <li class="">
+        <a href="#purchaseBtnIncome" class="btn btn-outline-light btn-sm" data-toggle="tab">
+            Purchase
+        </a>
+    </li>
+    <li class="">
+        <a href="#salesBtnIncome" class="btn btn-outline-light btn-sm" data-toggle="tab">
+            Sales
+        </a>
+    </li>
+</ul>
+
+
+<div class="tab-content">
+    <div class="tab-pane fade in active" id="reportBtnIncome">
+        <div class="row">
+            <div class="col-md-1">
+                <div class="row">
+                    <button class="btn btn-success btn-sm" id="printBtnIncomeStatement">Print</button>
+                </div>
+            </div>
+            <div class="col-md-10" id="printIncomeStatement" style="background-color:ghostwhite;">
+                <table class="table table-borderless">
+                    <tr>
+                        <td id="companyLogo" rowspan="2" align="right">
+                            <img src="~/images/Company/logo.jpg" width="100" height="100" alt="No" />
+                        </td>
+                        <td style="text-align:center;">
+                            <h3 id="companyName" style="font-weight: 500;">Hima Cosmetics</h3><br />
+                            <h6 id="companySlogan" style="margin-top: -21px;font-size: 10px;">Buy Cosmetics</h6>
+                        </td>
+                        <td width="20%"></td>
+                        <td>
+                            <h3 style="font-weight: 900;">Income Statement</h3><br />
+                            <h6 style="margin-top: -21px;font-size: 9px;">Date. <b id="invoiceNumber">#@DateTime.Now.ToString("dd MMM yyyy")</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="text-align:center;"> Duration: @Convert.ToDateTime(Model.StartDate).ToString("dd MMM yyyy") -  @Convert.ToDateTime(Model.EndDate).ToString("dd MMM yyyy")</td>
+                    </tr>
+                </table>
+                <table class="table table-bordered" id="invoiceTable">
+                    <thead style="text-align:center;">
+                        <tr>
+                            <th style=" width: 20% !important;">Description</th>
+                            <th style=" width: 40% !important;"></th>
+                            <th style=" width: 20% !important;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style=" width: 20% !important;">Total Sales</td>
+                            <td style=" width: 40% !important;"></td>
+                            <td style=" width: 20% !important;">@Model.TotalSalesAmount</td>
+                        </tr>
+                        <tr>
+                            <td style=" width: 20% !important;">Account Receivable</td>
+                            <td style=" width: 40% !important;"></td>
+                            <td style=" width: 20% !important;">@Model.AccountReceivable</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"></td>
+                            <td>(+) @netReceivable</td>
+                        </tr>
+                        <tr>
+                            <td style=" width: 20% !important;">Total Purchase</td>
+                            <td style=" width: 40% !important;"></td>
+                            <td style=" width: 20% !important;">@Model.TotalPurchaseAmount</td>
+                        </tr>
+                        <tr>
+                            <td style=" width: 20% !important;">Account Payable</td>
+                            <td style=" width: 40% !important;"></td>
+                            <td style=" width: 20% !important;">@Model.AccountPayable</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"></td>
+                            <td>(+) @netPayable</td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2" style="text-align:right;">Net Income</td>
+                            <td>@Model.FinalStatement</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-1">
+
+            </div>
+        </div>
     </div>
-    </div>
-    <div class="col-md-10" id="printIncomeStatement" style="background-color:ghostwhite;">
-        <table class="table table-borderless">
-            <tr>
-                <td id="companyLogo" rowspan="2" align="right">
-                    <img src="~/images/Company/logo.jpg" width="100" height="100" alt="No" />
-                </td>
-                <td style="text-align:center;">
-                    <h3 id="companyName" style="font-weight: 500;">Hima Cosmetics</h3><br />
-                    <h6 id="companySlogan" style="margin-top: -21px;font-size: 10px;">Buy Cosmetics</h6>
-                </td>
-                <td width="20%"></td>
-                <td>
-                    <h3 style="font-weight: 900;">Income Statement</h3><br />
-                    <h6 style="margin-top: -21px;font-size: 9px;">Date. <b id="invoiceNumber">#@DateTime.Now.ToString("dd MMM yyyy")</b></h6>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="4" style="text-align:center;"> Duration: @Convert.ToDateTime(Model.StartDate).ToString("dd MMM yyyy") -  @Convert.ToDateTime(Model.EndDate).ToString("dd MMM yyyy")</td>
-            </tr>
-        </table>
-        <table class="table table-bordered" id="invoiceTable">
-            <thead style="text-align:center;">
+    <div class="tab-pane" id="purchaseBtnIncome">
+        <table class="table table-bordered table-hover" id="purchaseBtnIncomeList" style="margin-top:10px !important;">
+            <thead style="background-color:coral; text-align:center;">
                 <tr>
-                    <th style=" width: 20% !important;">Description</th>
-                    <th style=" width: 40% !important;"></th>
-                    <th style=" width: 20% !important;">Amount</th>
+                    <th style="text-align:center;">Invoice No.</th>
+                    <th style="text-align:center;">Supplier Name</th>
+                    <th style="text-align:center;">Grand Total</th>
+                    <th style="text-align:center;">Paid Amount</th>
+                    <th style="text-align:center;">Dues</th>
+                    <th style="text-align:center;">Date</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td style=" width: 20% !important;">Total Sales</td>
-                    <td style=" width: 40% !important;"></td>
-                    <td style=" width: 20% !important;">@Model.TotalSalesAmount</td>
-                </tr>
-                <tr>
-                    <td style=" width: 20% !important;">Account Receivable</td>
-                    <td style=" width: 40% !important;"></td>
-                    <td style=" width: 20% !important;">@Model.AccountReceivable</td>
-                </tr>
-                <tr>
-                    <td colspan="2"></td>
-                    <td>(+) @netReceivable</td>
-                </tr>
-                <tr>
-                    <td style=" width: 20% !important;">Total Purchase</td>
-                    <td style=" width: 40% !important;"></td>
-                    <td style=" width: 20% !important;">@Model.TotalPurchaseAmount</td>
-                </tr>
-                <tr>
-                    <td style=" width: 20% !important;">Account Payable</td>
-                    <td style=" width: 40% !important;"></td>
-                    <td style=" width: 20% !important;">@Model.AccountPayable</td>
-                </tr>
-                <tr>
-                    <td colspan="2"></td>
-                    <td>(+) @netPayable</td>
-                </tr>
-
-                <tr>
-                    <td colspan="2" style="text-align:right;">Net Income</td>
-                    <td>@Model.FinalStatement</td>
-                </tr>
-            </tbody>
         </table>
-        
     </div>
-    <div class="col-md-1"></div>
+    <div class="tab-pane" id="salesBtnIncome">
+        <table class="table table-bordered" id="salesBtnIncomeList" style="margin-top:10px !important;">
+            <thead style="background-color:coral; text-align:center;">
+                <tr>
+                    <th style="text-align:center;">Invoice No.</th>
+                    <th style="text-align:center;">Customer Name</th>
+                    <th style="text-align:center;">Grand Total</th>
+                    <th style="text-align:center;">Paid Amount</th>
+                    <th style="text-align:center;">Dues</th>
+                    <th style="text-align:center;">Date</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
 </div>
+
+
+
+
