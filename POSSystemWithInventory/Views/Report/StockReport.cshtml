@@ -40,10 +40,11 @@
                         <div class="table-responsive" id="printStockReport">
                             <table class="table table-hover table-bordered" id="stockList">
                                 <thead style="background-color:coral;">
-                                    <tr>
+                                    <tr class="center">
                                         <th>Product Name</th>
                                         <th>Quantity</th>
                                         <th>Warning Quantity</th>
+                                        <th>Sell Price</th>
                                         <th>Price</th>
                                     </tr>
                                 </thead>
@@ -51,8 +52,8 @@
                                 </tbody>
                                 <tfoot style="background-color:coral;">
                                     <tr>
-                                        <td colspan="3" class="rightAlign">total</td>
-                                        <td class="rightAlign" id="totalPrice"></td>
+                                        <td colspan="4" style="text-align:right;">total</td>
+                                        <td style="text-align:right;" id="totalPrice"></td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -92,26 +93,31 @@
 
                         },
                         "complete": function (json) {
-
+                            totalPrice = 0;
                         }
                     },
                     "columnDefs": [
                         { "className": "centerAlign", "targets": [0, 1, 2] },
-                        { "className": "rightAlign", "targets": [3] },
+                        { "className": "rightAlign", "targets": [3,4] },
                     ],
                     "columns": [
                         { "data": "product.name", "name": "product.name", "autowidth": true, "orderable": true },
                         { "data": "availableQuantity", "name": "availableQuantity", "autowidth": true, "orderable": true },
                         { "data": "product.warningQuantity", "name": "product.warningQuantity", "autowidth": true, "orderable": true },
+                        { "data": "sellPrice", "name": "sellPrice", "autowidth": true, "orderable": true },
                         {
                             "render": function (data, type, full, meta) {
                                 totalPrice += (full.availableQuantity * full.sellPrice);
-                                selector.totalPrice.text(totalPrice.toFixed(2));
                                 return (full.availableQuantity * full.sellPrice).toFixed(2);
                             }
                         },
                         
-                    ]
+                    ],
+                    "footerCallback": function (row, data, start, end, display) {
+                        var api = this.api(), data;
+                        $(api.column(4).footer()).html("=" + totalPrice.toFixed(2) + "/-");
+                        totalPrice = 0;
+                    }
                 });
                 
             }

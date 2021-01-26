@@ -103,18 +103,39 @@
                     "columns": [
                         { "data": "updatedBy", "name": "updatedBy", "autowidth": true, "orderable": true },
                         { "data": "grandTotal", "name": "grandTotal", "autowidth": true, "orderable": true },
-                        {
-                            "render": function (data, row, full, meta) {
-                                totalPrice += full.grandTotal;
-                                totalDues += full.dues;
-                                selector.totalDues.text("= " + totalDues.toFixed(2));
-                                selector.totalPrice.text("= " + totalPrice.toFixed(2));
-                                return full.dues;
-                            }
-                        },
+                        { "data": "dues", "name": "dues", "autowidth": true, "orderable": true },
                         
+                    ],
+                    "footerCallback": function (row, data, start, end, display) {
+                        var api = this.api(), data;
+                        var intVal = function (i) {
+                            return typeof i === 'string' ?
+                                i.replace(/[\$,]/g, '') * 1 :
+                                typeof i === 'number' ?
+                                    i : 0;
+                        };
 
-                    ]
+                        let column1 = intVal;
+                        let column2 = intVal;
+
+                        let grandTotal = api
+                            .column(1)
+                            .data()
+                            .reduce(function (a, b) {
+                                return column1(a) + column1(b);
+                            }, 0);
+
+                        let duesAmount = api
+                            .column(2)
+                            .data()
+                            .reduce(function (a, b) {
+                                return column2(a) + column2(b);
+                            }, 0);
+
+
+                        $(api.column(1).footer()).html("=" + grandTotal + "/-");
+                        $(api.column(2).footer()).html("=" + duesAmount + "/-");
+                    }
                 });
 
             }

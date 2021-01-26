@@ -109,7 +109,46 @@
                         { "data": "paidAmount", "name": "paidAmount", "autowidth": true, "orderable": true },
                         { "data": "dues", "name": "dues", "autowidth": true, "orderable": true },
                         { "data": "createdDate", "name": "createdDate", "autowidth": true, "orderable": true },
-                    ]
+                    ],
+                    "footerCallback": function (row, data, start, end, display) {
+                        var api = this.api(), data;
+                        var intVal = function (i) {
+                            return typeof i === 'string' ?
+                                i.replace(/[\$,]/g, '') * 1 :
+                                typeof i === 'number' ?
+                                    i : 0;
+                        };
+
+                        let column2 = intVal;
+                        let column3 = intVal;
+                        let column4 = intVal;
+
+                        let grandTotal = api
+                            .column(2)
+                            .data()
+                            .reduce(function (a, b) {
+                                return column2(a) + column2(b);
+                            }, 0);
+
+                        let paidAmount = api
+                            .column(3)
+                            .data()
+                            .reduce(function (a, b) {
+                                return column3(a) + column3(b);
+                            }, 0);
+
+                        let duesAmount = api
+                            .column(4)
+                            .data()
+                            .reduce(function (a, b) {
+                                return column4(a) + column4(b);
+                            }, 0);
+
+                        $(api.column(2).footer()).html("= " + grandTotal + "/-");
+                        $(api.column(3).footer()).html("= " + paidAmount + "/-");
+                        $(api.column(4).footer()).html("= " + duesAmount + "/-");
+                    }
+
                 });
             }
             function GenerateSalesInRange(startDate, endDate) {
@@ -143,7 +182,45 @@
                         { "data": "paidAmount", "name": "paidAmount", "autowidth": true, "orderable": true },
                         { "data": "dues", "name": "dues", "autowidth": true, "orderable": true },
                         { "data": "createdDate", "name": "createdDate", "autowidth": true, "orderable": true },
-                    ]
+                    ],
+                    "footerCallback": function (row, data, start, end, display) {
+                        var api = this.api(), data;
+                        var intVal = function (i) {
+                            return typeof i === 'string' ?
+                                i.replace(/[\$,]/g, '') * 1 :
+                                typeof i === 'number' ?
+                                    i : 0;
+                        };
+
+                        let column2 = intVal;
+                        let column3 = intVal;
+                        let column4 = intVal;
+
+                        let grandTotal = api
+                            .column(2)
+                            .data()
+                            .reduce(function (a, b) {
+                                return column2(a) + column2(b);
+                            }, 0);
+
+                        let paidAmount = api
+                            .column(3)
+                            .data()
+                            .reduce(function (a, b) {
+                                return column3(a) + column3(b);
+                            }, 0);
+
+                        let duesAmount = api
+                            .column(4)
+                            .data()
+                            .reduce(function (a, b) {
+                                return column4(a) + column4(b);
+                            }, 0);
+
+                        $(api.column(2).footer()).html("= " + grandTotal + "/-");
+                        $(api.column(3).footer()).html("= " + paidAmount + "/-");
+                        $(api.column(4).footer()).html("= " + duesAmount + "/-");
+                    }
                 });
             }
 

@@ -8,6 +8,10 @@ namespace POSSystemWithInventory.Models
 {
     public class SalesInvoiceDetailVM
     {
+        public SalesInvoiceDetailVM()
+        {
+            SalesInvoiceDetail = new List<SalesInvoiceDetailVM>();
+        }
         public int Id { get; set; }
         public string InvoiceNumber { get; set; }
         public int? SalesInvoiceId { get; set; }
@@ -20,5 +24,11 @@ namespace POSSystemWithInventory.Models
         public decimal Price { get; set; }
         [Column(TypeName = "decimal(16,2)")]
         public decimal UnitPrice { get; set; }
+
+        [Column(TypeName = "decimal(16,2)")]
+        public decimal Count { get; set; }
+        public string ProductName { get; set; }
+        public string PhotoUrl { get; set; }
+        public List<SalesInvoiceDetailVM> SalesInvoiceDetail { get; set; }
     }
 }

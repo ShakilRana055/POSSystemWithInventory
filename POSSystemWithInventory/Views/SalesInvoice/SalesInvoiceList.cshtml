@@ -27,7 +27,7 @@
         <div class="card">
             <div id="headingOne" class="card-header bg-blue1">
                 <button type="button" data-toggle="collapse" data-target="#advanceSearchPurchaseProductList" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
-                    <h5 class="m-0 p-0" style="color: #fff;">Product List</h5>
+                    <h5 class="m-0 p-0" style="color: #fff;">Sales List</h5>
                 </button>
             </div>
             <div class="card-body">
@@ -84,9 +84,6 @@
 
         };
         function GeneratePurchaseProductList() {
-            let grandTotal = 0;
-            let dues = 0;
-            let paidAmount = 0;
             var purchaseProductList = selector.purchaseProductList.dataTable({
                 "processing": true,
                 "serverSide": true,
@@ -118,14 +115,6 @@
                     { "data": "createdDate", "name": "createdDate", "autowidth": true, "orderable": true},
                     {
                         "render": function (data, type, full, meta) {
-                            grandTotal += full.grandTotal;
-                            dues += full.dues;
-                            paidAmount += full.paidAmount;
-
-                            selector.grandTotal.text("= " + grandTotal.toFixed(2));
-                            selector.paidAmount.text("= " + paidAmount.toFixed(2));
-                            selector.duesAmount.text("= " + dues.toFixed(2));
-
                             return `
                                 <div class="btn-group">
                                     <i class="fa fa-ellipsis-h" title = 'Actions' style = 'cursor:pointer;' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -138,7 +127,45 @@
 
                         }
                     },
-                ]
+                ],
+                "footerCallback": function (row, data, start, end, display) {
+                    var api = this.api(), data;
+                    var intVal = function (i) {
+                        return typeof i === 'string' ?
+                            i.replace(/[\$,]/g, '') * 1 :
+                            typeof i === 'number' ?
+                                i : 0;
+                    };
+
+                    let column2 = intVal;
+                    let column3 = intVal;
+                    let column4 = intVal;
+
+                    let grandTotal = api
+                        .column(2)
+                        .data()
+                        .reduce(function (a, b) {
+                            return column2(a) + column2(b);
+                        }, 0);
+
+                    let paidAmount = api
+                        .column(3)
+                        .data()
+                        .reduce(function (a, b) {
+                            return column3(a) + column3(b);
+                        }, 0);
+
+                    let duesAmount = api
+                        .column(4)
+                        .data()
+                        .reduce(function (a, b) {
+                            return column4(a) + column4(b);
+                        }, 0);
+
+                    $(api.column(2).footer()).html("= " + grandTotal + "/-");
+                    $(api.column(3).footer()).html("= " + paidAmount + "/-");
+                    $(api.column(4).footer()).html("= " + duesAmount + "/-");
+                }
             });
 
             selector.tableInformation = purchaseProductList;

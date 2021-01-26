@@ -193,6 +193,8 @@ namespace POSSystemWithInventory.Controllers
         }
         #endregion
 
+        #region IncomeReport Sales and Purchase List
+
         [HttpPost]
         public IActionResult PurchaseListInRange()
         {
@@ -292,5 +294,6 @@ namespace POSSystemWithInventory.Controllers
             //Returning Json Data    
             return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
         }
+        #endregion
     }
 }

@@ -39,10 +39,21 @@ namespace POSSystemWithInventory.Controllers
 
         public IActionResult Top10Sale()
         {
-            //ViewBag.top10Sales = context.SalesInvoiceDetail.Top10Sales();
-            return View();
+            var getIalesInvoiceList = context.SalesInvoiceDetail.Top10Sales();
+            List<SalesInvoiceDetailVM> salesInvoice = new List<SalesInvoiceDetailVM>();
+            foreach (var item in getIalesInvoiceList)
+            {
+                salesInvoice.Add(new SalesInvoiceDetailVM()
+                {
+                    ProductName = item.Key.Product.Name,
+                    Count = item.Value,
+                    PhotoUrl = item.Key.Product.PhotoUrl,
+                });
+            }
+            var salesInvoiceList = new SalesInvoiceDetailVM();
+            salesInvoiceList.SalesInvoiceDetail = salesInvoice;
+            return View(salesInvoiceList);
         }
-
         [HttpPost]
         public IActionResult Index(SalesInvoiceVM salesInvoiceVM)
         {

@@ -15,5 +15,6 @@ namespace POSSystemWithInventory.RepositoryPattern.Interfaces.GeneralInterface
         public decimal TodaysPurchase();
         public decimal TodaysPurchase(string currentDate);
         public IEnumerable<PurchaseProduct> GetRelatedDataWithDate(DateTime startDate, DateTime endDate);
+        public IEnumerable<PurchaseProduct> GetDuesBySupplier(int supplierId);
     }
 }

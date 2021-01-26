@@ -193,6 +193,22 @@ namespace POSSystemWithInventory.Controllers
             };
             return PartialView("_SupplierInformation", supplierVM);
         }
+        public IActionResult SupplierInformationById(int search)
+        {
+            var supplier = context.Supplier.Find(x => x.Id == search).FirstOrDefault();
+            SupplierVM supplierVM = new SupplierVM()
+            {
+                Name = supplier.Name,
+                Email = supplier.Email,
+                Phone = supplier.Phone,
+                Address = supplier.Address,
+                PhotoUrl = supplier.PhotoUrl,
+                CompanyName = supplier.CompanyName,
+                Designation = supplier.Designation,
+                NID = supplier.NID,
+            };
+            return Json(supplierVM);
+        }
         #endregion
 
         #region Customer

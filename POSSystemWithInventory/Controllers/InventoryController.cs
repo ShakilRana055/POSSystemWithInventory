@@ -176,5 +176,45 @@ namespace POSSystemWithInventory.Controllers
             return Json(purchaseProductDetailList);
         }
         #endregion
+
+        #region Accounts Payable
+        public IActionResult AccountPay()
+        {
+            var supplier = context.Supplier.GetAll().ToList();
+            PurchaseProductVM purchaseProductVM = new PurchaseProductVM()
+            {
+                SupplierItem = POSHelper.Supplier(supplier),
+            };
+            return View(purchaseProductVM);
+        }
+        [HttpPost]
+        public IActionResult AccountPay(PurchaseProductVM purchaseProduct)
+        {
+            try
+            {
+                foreach (var item in purchaseProduct.PurchaseProducts)
+                {
+                    var purchase = context.PurchaseProduct.Find(x => x.InvoiceNumber == item.InvoiceNumber).FirstOrDefault();
+                    if(purchase != null)
+                    {
+                        purchase.PaidAmount = purchase.GrandTotal;
+                        purchase.Dues = 0;
+                        context.Save();
+                    }
+                }
+                return Json(true);
+            }
+            catch (Exception ex)
+            {
+                return Json(false);
+                throw ex;
+            }
+        }
+        public IActionResult GetDuesBySupplier(int search)
+        {
+            var dues = context.PurchaseProduct.GetDuesBySupplier(search);
+            return Json(dues);
+        }
+        #endregion
     }
 }

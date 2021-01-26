@@ -26,29 +26,29 @@ namespace POSSystemWithInventory.RepositoryPattern.Repositories.GeneralRepositor
                            .ToList();
             return response;
         }
-        public Dictionary <SalesInvoiceDetail, int> Top10Sales()
+        public Dictionary <SalesInvoiceDetail, decimal> Top10Sales()
         {
-            Dictionary<SalesInvoiceDetail, int> result = new Dictionary<SalesInvoiceDetail, int>();
+            Dictionary<SalesInvoiceDetail, decimal> result = new Dictionary<SalesInvoiceDetail, decimal>();
 
             var response = context.SalesInvoiceDetail.Include(item => item.Product)
                             .Select(item => item.ProductId)
                             .Distinct()
                             .ToList();
-            Dictionary<int?, int> storage = new Dictionary<int?, int>();
+            Dictionary<int?, decimal> storage = new Dictionary<int?, decimal>();
 
             foreach (var item in response)
             {
                 var counting = context.SalesInvoiceDetail
                                 .Where(x => x.ProductId == item)
                                 .ToList()
-                                .Count();
+                                .Sum(item => item.Quantity);
                 storage.Add(item, counting);
             }
             int length = storage.Count;
             var newStorage = storage.OrderByDescending(item => item.Value).Take(length >= 10 ? 10 : length);
             foreach (var item in newStorage)
             {
-                int count = item.Value;
+                decimal count = item.Value;
                 int? productId = item.Key;
                 var salesInvoiceDetails = context.SalesInvoiceDetail.Include(item => item.Product)
                                           .Where(item => item.ProductId == productId)

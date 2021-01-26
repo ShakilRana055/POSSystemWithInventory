@@ -12,6 +12,7 @@ namespace POSSystemWithInventory.Models
         public PurchaseProductVM()
         {
             PurchaseProductDetails = new List<PurchaseProductDetailVM>();
+            PurchaseProducts = new List<PurchaseProductVM>();
         }
         public int Id { get; set; }
 
@@ -37,5 +38,6 @@ namespace POSSystemWithInventory.Models
         public List<SelectListItem> VatItem { get; set; }
         public PurchaseProductDetailVM PurchaseProductDetail { get; set; }
         public List<PurchaseProductDetailVM> PurchaseProductDetails { get; set; }
+        public List<PurchaseProductVM> PurchaseProducts { get; set; }
     }
 }

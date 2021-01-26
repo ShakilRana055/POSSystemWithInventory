@@ -1,4 +1,6 @@
-﻿@{
+﻿@model POSSystemWithInventory.Models.SalesInvoiceDetailVM
+
+@{
     ViewData["Title"] = "Top 10 Sale";
     Layout = "~/Views/Shared/_POSLayout.cshtml";
     var dictionary = ViewBag.top10Sales;
@@ -13,7 +15,8 @@
         background-color: #b3b3ff;
     }
 </style>
-@*<div class="row">
+
+<div class="row">
     <div class="col-md-12">
         <div class="card">
             <div id="headingTwo" class="card-header bg-blue1">
@@ -27,24 +30,24 @@
                         <tr>
                             <th>Name</th>
                             <th>Image</th>
-                            <th>Times</th>
+                            <th>Quantity</th>
                         </tr>
                     </thead>
                     <tbody>
                         @{
                             int count = 0;
-                            foreach (var item in dictionary)
+                            foreach (var item in Model.SalesInvoiceDetail)
                             {
                                 string className = count % 2 == 0 ? "even" : "odd";
-                                <tr class=@className>
+                                <tr class=@className style="text-align:center;">
                                     <td>
-                                        @item.key.Product.Name
+                                        @item.ProductName
                                     </td>
                                     <td>
-                                        <img src="@item.key.Product.PhotoUrl" width="150" height="150" title="@item.key.Product.Name" alt="No image" />
+                                        <img src="@item.PhotoUrl" width="50" height="50" title="@item.ProductName" alt="No image" />
                                     </td>
                                     <td>
-                                        @item.Value
+                                        @item.Count
                                     </td>
                                 </tr>
 
@@ -56,6 +59,6 @@
             </div>
         </div>
     </div>
-</div>*@
+</div>
 
 
