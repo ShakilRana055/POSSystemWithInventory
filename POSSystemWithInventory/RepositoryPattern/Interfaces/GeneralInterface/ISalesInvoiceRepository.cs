@@ -15,5 +15,6 @@ namespace POSSystemWithInventory.RepositoryPattern.Interfaces.GeneralInterface
         public decimal TodaysSales();
         public decimal TodaysSales(string currentDate);
         public IEnumerable<SalesInvoice> GetRelatedDataWithDate(DateTime startDate, DateTime endDate);
+        public IEnumerable<SalesInvoice> GetDuesByCustomer(int customerId);
     }
 }

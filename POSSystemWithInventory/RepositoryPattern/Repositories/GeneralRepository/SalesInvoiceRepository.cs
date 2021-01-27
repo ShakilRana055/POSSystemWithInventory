@@ -77,5 +77,12 @@ namespace POSSystemWithInventory.RepositoryPattern.Repositories.GeneralRepositor
                            .ToList();
             return response;
         }
+        public IEnumerable<SalesInvoice> GetDuesByCustomer(int customerId)
+        {
+            var response = context.SalesInvoice.ToList()
+                           .Where(item => item.CustomerId == customerId && item.Dues > 0)
+                           .ToList();
+            return response;
+        }
     }
 }

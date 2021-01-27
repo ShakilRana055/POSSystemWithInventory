@@ -216,5 +216,7 @@ namespace POSSystemWithInventory.Controllers
             return Json(dues);
         }
         #endregion
+
+       
     }
 }

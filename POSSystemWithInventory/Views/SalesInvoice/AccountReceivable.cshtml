@@ -1,0 +1,222 @@
+﻿@model POSSystemWithInventory.Models.SalesInvoiceVM
+@{
+    ViewData["Title"] = "Account Receivable";
+    Layout = "~/Views/Shared/_POSLayout.cshtml";
+}
+
+<style>
+    .odd {
+        background-color: #b3ffff;
+    }
+
+    .even {
+        background-color: #b3b3ff;
+    }
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <form id="brandCreateForm" enctype="multipart/form-data">
+            <div class="card">
+                <div id="headingOne" class="card-header bg-blue1">
+                    <button type="button" data-toggle="collapse" data-target="#Collapse" aria-expanded="true" class="text-left m-0 p-0 btn btn-block" style="box-shadow: none;">
+                        <h5 class="m-0 p-0" style="color: #fff;">Accounts Receivable</h5>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="Collapse" class="collapse show">
+                        <div class="row">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-10">
+                                <div class="input-group">
+                                    <select class="form-control select2" asp-items="Model.CustomerItem" asp-for="CustomerId">
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-success btn-sm" id="search" tittle="Search" type="button"><i class="fa fa-search"></i>Search</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-1"></div>
+                        </div>
+                        <div class="row" id="overAllInformation" style="display:none;">
+                            <div class="col-md-12">
+                                <h3 style="text-align:center;">Customer Information</h3>
+                                <table class="table table-borderless">
+                                    <tbody id="customerInformation">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-12">
+                                <h3 style="text-align:center;">Account Dues</h3>
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr style="text-align:center; background-color:coral;">
+                                            <th>Invoice No.</th>
+                                            <th>Grand Total</th>
+                                            <th>Paid Amount</th>
+                                            <th>Dues</th>
+                                            <th>Date</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="duesInformation">
+                                    </tbody>
+                                    <tfoot>
+                                        <tr style="background-color: coral;">
+                                            <td colspan="3" style="text-align:right;">Total</td>
+                                            <td style="text-align:center;" id="totalDues"></td>
+                                            <td style="text-align:center;"></td>
+                                            <td style="text-align:center;"></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div class="col-md-9"></div>
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-secondary pull-right" id="payDues">Pay</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        (function () {
+            let ajaxOperation = new AjaxOperation();
+            let selector = {
+                customerId: $("#CustomerId"),
+                overAllInformation: $("#overAllInformation"),
+                customerInformation: $("#customerInformation"),
+                duesInformation: $("#duesInformation"),
+                search: $("#search"),
+                payDues: $("#payDues"),
+                totalDues: $("#totalDues"),
+                increment: 1,
+                duesInfo: ".duesInfo",
+            };
+            class SalesInvoiceDetail {
+                constructor(invoiceNumber, dues) {
+                    this.invoiceNumber = invoiceNumber;
+                    this.dues = dues;
+                }
+            }
+            class Process {
+                CustomerInformation(customer) {
+                    let data = `
+                            <tr>
+                                <td style="text-align:right;">Name :</td>
+                                <td style="text-align:left;">${customer.name}</td>
+                                <td style="width:20% !important;"></td>
+                                <td style="text-align:center;" rowspan="2">
+                                    <img src = "${customer.photoUrl}" width = "100" height = "100" alt = "No Image">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:right;">Phone :</td>
+                                <td style="text-align:left;">${customer.phone}</td>
+                                <td style="width:20% !important;"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:right;">Email :</td>
+                                <td style="text-align:left;">${customer.email}</td>
+                                <td style="width:20% !important;text-align:right;">Designation :</td>
+                                <td style="text-align:left;">${customer.designation}</td>
+                            </tr>`;
+                    selector.customerInformation.html(data);
+                }
+                GetCustomerInformation(customerId) {
+                    let customerInformation = ajaxOperation.GetAjaxByValue("/User/CustomerInformationById", customerId);
+                    this.CustomerInformation(customerInformation);
+                }
+                BuildDues(invoiceNumber, grandTotal, paidAmount, dues, date) {
+                    let data = `<tr style = "text-align:center;" class = ${selector.increment % 2 == 0 ? "even" : "odd"}>
+                                <td>${invoiceNumber}</td>
+                                <td>${grandTotal}</td>
+                                <td>${paidAmount}</td>
+                                <td>${dues}</td>
+                                <td>${date}</td>
+                                <td>
+                                    <input type="checkbox" class="duesInfo" invoiceNumber="${invoiceNumber}" dues="${dues}" checked="checked" />
+                                </td>
+                            </tr>`;
+                    selector.increment++;
+                    return data;
+                }
+                GetAllDues(customerId) {
+                    let duesList = ajaxOperation.GetAjaxByValue("/SalesInvoice/GetDuesByCustomer", customerId);
+                    console.log(duesList);
+                    let data = "";
+                    for (let i = 0; i < duesList.length; i ++) {
+                        let invoiceNumber = duesList[i].invoiceNumber;
+                        let grandTotal = duesList[i].grandTotal;
+                        let paidAmount = duesList[i].paidAmount;
+                        let supplierDues = duesList[i].dues;
+                        let date = duesList[i].createdDate;
+                        data += this.BuildDues(invoiceNumber, grandTotal.toFixed(2), paidAmount.toFixed(2), supplierDues.toFixed(2), date);
+                    }
+                    selector.duesInformation.html(data);
+                    selector.totalDues.text(this.CalculateSum(selector.duesInfo));
+                }
+                CalculateSum(className) {
+                    let summation = 0;
+                    $(className).each(function () {
+                        if ($(this).is(":checked")) {
+                            summation += Number($(this).attr("dues"));
+                        }
+                    });
+                    return summation.toFixed(2);
+                }
+                MakeJson(className) {
+                    let jsonData = [];
+                    $(className).each(function () {
+                        if ($(this).is(":checked")) {
+                            let invoiceNumber = $(this).attr("invoiceNumber");
+                            let dues = $(this).attr("dues");
+                            let obj = new SalesInvoiceDetail(invoiceNumber, dues);
+                            jsonData.push(obj);
+                        }
+                    });
+                    let data = {
+                        SalesInvoiceDetails: jsonData,
+                    }
+                    return data;
+                }
+            }
+            let process = new Process();
+            selector.search.click(function () {
+
+                let customerId = selector.customerId.val();
+                process.GetCustomerInformation(customerId);
+
+                process.GetAllDues(customerId);
+                selector.overAllInformation.show();
+            });
+
+            $(document).on("change", selector.duesInfo, function () {
+                let sum = process.CalculateSum(selector.duesInfo);
+                selector.totalDues.text(sum);
+            });
+
+            selector.payDues.click(function () {
+                let jsonData = process.MakeJson(selector.duesInfo);
+                if (jsonData.SalesInvoiceDetails.length > 0) {
+                    let response = ajaxOperation.SavePostAjax("/SalesInvoice/AccountReceivable", jsonData);
+                    if (response === true) {
+                        toastr.success("Payment Received!", "Success");
+                        selector.overAllInformation.hide();
+                    }
+                    else {
+                        toastr.error("Something went wrong!", "Error");
+                    }
+                }
+                else {
+                    toastr.error("No dues!", "Error");
+                }
+            })
+        })();
+    </script>
+}

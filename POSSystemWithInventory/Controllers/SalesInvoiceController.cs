@@ -210,5 +210,47 @@ namespace POSSystemWithInventory.Controllers
             return PartialView("_SalesInvoiceInformation", salesInvoice);
         }
         #endregion
+
+        #region Accounts Receivable
+        public IActionResult AccountReceivable()
+        {
+            var customer = context.Customer.GetAll().ToList();
+            customer = customer.Where(item => item.Name != "Walk in Customer").ToList();
+            SalesInvoiceVM salesInvoiceVM = new SalesInvoiceVM()
+            {
+                CustomerItem = POSHelper.Customer(customer),
+            };
+            return View(salesInvoiceVM);
+        }
+        [HttpPost]
+        public IActionResult AccountReceivable(SalesInvoiceVM salesInvoiceVM)
+        {
+            try
+            {
+                foreach (var item in salesInvoiceVM.SalesInvoiceDetails)
+                {
+                    var salesInvoice = context.SalesInvoice.Find(x => x.InvoiceNumber == item.InvoiceNumber).FirstOrDefault();
+                    if (salesInvoice != null)
+                    {
+                        salesInvoice.PaidAmount = salesInvoice.GrandTotal;
+                        salesInvoice.Dues = 0;
+                        context.Save();
+                    }
+                }
+                return Json(true);
+            }
+            catch (Exception ex)
+            {
+                return Json(false);
+                throw ex;
+            }
+        }
+        public IActionResult GetDuesByCustomer(int search)
+        {
+            var dues = context.SalesInvoice.GetDuesByCustomer(search);
+            return Json(dues);
+        }
+
+        #endregion
     }
 }

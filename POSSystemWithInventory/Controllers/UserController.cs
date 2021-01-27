@@ -220,7 +220,6 @@ namespace POSSystemWithInventory.Controllers
             context.Customer.Add(customer);
             context.Save();
         }
-
         public IActionResult Customer()
         {
             var customerExist = context.Customer.GetAll().ToList();
@@ -395,6 +394,11 @@ namespace POSSystemWithInventory.Controllers
         {
             var response = context.Customer.GetAll().ToList();
             return Json(response);
+        }
+        public IActionResult CustomerInformationById(int search)
+        {
+            var customer = context.Customer.Find(item => item.Id == search).FirstOrDefault();
+            return Json(customer);
         }
         #endregion
 

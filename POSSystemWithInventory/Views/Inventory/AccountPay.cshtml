@@ -196,6 +196,7 @@
             process.GetAllDues(supplierId);
             selector.overAllInformation.show();
         });
+
         $(document).on("change", selector.duesInfo, function () {
             let sum = process.CalculateSum(selector.duesInfo);
             selector.totalDues.text(sum);
