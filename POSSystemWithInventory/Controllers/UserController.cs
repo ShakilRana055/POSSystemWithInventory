@@ -556,6 +556,11 @@ namespace POSSystemWithInventory.Controllers
             var userAccount = context.User.Find(x => x.Email == search).FirstOrDefault();
             return userAccount != null ? Json(false) : Json(true);
         }
+        public IActionResult AdminInformation()
+        {
+            var information = context.User.Find(item => item.HasLogged == true).FirstOrDefault();
+            return Json(information);
+        }
         #endregion
     }
 }

@@ -202,8 +202,17 @@
                                     </div>
                                     </div>`;
                                 }
-                                else
-                                    return "";
+                                else {
+                                    return `
+                                    <div class="btn-group">
+                                        <i class="fa fa-ellipsis-h" title = 'Actions' style = 'cursor:pointer;' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                                    <div class="dropdown-menu" >
+                                        <button style="font-size: inherit;" class="dropdown-item btn-rx viewAdminAccountInformation" supplierId = "${full.id}" ><i class="fa fa-info-circle" aria-hidden="true"></i>View</button >
+                                        <button style="font-size: inherit;" class="dropdown-item btn-rx editAdminAccountInformation" name = "${full.name}" email = "${full.email}" userName = "${full.userName}" createdDate = "${full.createdDate}" password = "${full.password}" adminAccountId = "${full.id}" ><i class="fa fa-check-circle" aria-hidden="true"></i>Edit</button >
+                                        </div>
+                                    </div>`;
+                                }
+                                    
                             }
                         },
                     ]
