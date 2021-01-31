@@ -88,6 +88,7 @@ namespace POSSystemWithInventory.Controllers
             }
         }
         
+        [HttpPost]
         public IActionResult ProductEditViewUpdate(ProductVM productVM)
         {
             try
